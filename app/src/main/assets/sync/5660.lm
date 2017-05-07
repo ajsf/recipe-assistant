@@ -1,0 +1,55 @@
+Language model created by QuickLM on Fri Apr 28 19:00:23 EDT 2017
+Copyright (c) 1996-2010 Carnegie Mellon University and Alexander I. Rudnicky
+
+The model is in standard ARPA format, designed by Doug Paul while he was at MITRE.
+
+The code that was used to produce this language model is available in Open Source.
+Please visit http://www.speech.cs.cmu.edu/tools/ for more information
+
+The (fixed) discount mass is 0.5. The backoffs are computed using the ratio method.
+This model based on a corpus of 6 sentences and 9 words
+
+\data\
+ngram 1=9
+ngram 2=13
+ngram 3=10
+
+\1-grams:
+-0.8653 </s> -0.3010
+-0.8653 <s> -0.2374
+-1.0414 DIRECTION -0.2374
+-1.6435 DIRECTIONS -0.2374
+-1.6435 FIRST -0.2596
+-1.6435 INGREDIENTS -0.2374
+-1.6435 LAST -0.2596
+-1.6435 NEXT -0.2596
+-1.6435 PREVIOUS -0.2596
+
+\2-grams:
+-1.0792 <s> DIRECTIONS 0.0000
+-1.0792 <s> FIRST 0.0000
+-1.0792 <s> INGREDIENTS 0.0000
+-1.0792 <s> LAST 0.0000
+-1.0792 <s> NEXT 0.0000
+-1.0792 <s> PREVIOUS 0.0000
+-0.3010 DIRECTION </s> -0.3010
+-0.3010 DIRECTIONS </s> -0.3010
+-0.3010 FIRST DIRECTION 0.0000
+-0.3010 INGREDIENTS </s> -0.3010
+-0.3010 LAST DIRECTION 0.0000
+-0.3010 NEXT DIRECTION 0.0000
+-0.3010 PREVIOUS DIRECTION 0.0000
+
+\3-grams:
+-0.3010 <s> DIRECTIONS </s>
+-0.3010 <s> FIRST DIRECTION
+-0.3010 <s> INGREDIENTS </s>
+-0.3010 <s> LAST DIRECTION
+-0.3010 <s> NEXT DIRECTION
+-0.3010 <s> PREVIOUS DIRECTION
+-0.3010 FIRST DIRECTION </s>
+-0.3010 LAST DIRECTION </s>
+-0.3010 NEXT DIRECTION </s>
+-0.3010 PREVIOUS DIRECTION </s>
+
+\end\

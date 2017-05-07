@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Recipe Assistant</string>
+    <string name="debug_ingredient_string">12 ounces Penne pasta (we use whole wheat)\n2 tablespoons olive oil\n1/2 red onion, sliced\n2 cloves garlic, minced\n1/2 red bell pepper, cut into strips\n1/2 orange bell pepper, cut into strips\n1/2 yellow bell pepper, cut into strips\n1 package Butterball Turkey Sausage (13 oz), cut into 1/2 inch rounds\nCrushed red pepper, to taste\n1 1/2 cups grape tomatoes, halved\n1 cup shredded Parmesan cheese\n1/3 cup chopped fresh basil\nSalt and black pepper, to taste</string>
+    <string name="debug_directionsString">In a large pot of boiling salted water, cook pasta until al dente.\nWhile the pasta is cooking, heat the olive oil over medium-high heat in a large sauté pan.\nAdd the onion, garlic, peppers, and sausage. Cook for about 5 minutes, stirring occasionally.\nDrain the pasta and pour into a large serving bowl. Stir in the onions, peppers, and sausage. Add the tomatoes, Parmesan cheese, and basil.\nSeason with salt and black pepper, to taste. Serve immediately.</string>
+    <string name="ingredients_label">Ingredients</string>
+    <string name="directions_label">Directions</string>
+</resources>
