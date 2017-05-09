@@ -15,9 +15,18 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.aaron.recipeassistant.Model.InstructionListener;
+import com.example.aaron.recipeassistant.Model.MealList;
+import com.example.aaron.recipeassistant.Model.MealService;
+import com.example.aaron.recipeassistant.Model.Meal;
 import com.example.aaron.recipeassistant.Model.Recipe;
 import com.example.aaron.recipeassistant.Model.RecipeReader;
 import com.example.aaron.recipeassistant.Model.TestRecipeData;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,6 +58,20 @@ public class MainActivity extends AppCompatActivity {
         initButtons();
         initRecipe();
         listening = false;
+
+        MealService recipeService = MealService.retrofit.create(MealService.class);
+        Call<MealList> call = recipeService.getRandomSelection();
+        call.enqueue(new Callback<MealList>() {
+            @Override
+            public void onResponse(Call<MealList> call, Response<MealList> response) {
+                Log.i("recipeService Callback", response.toString());
+            }
+
+            @Override
+            public void onFailure(Call<MealList> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     private void requestAudioPermission() {

@@ -10,7 +10,7 @@ public class TestRecipeData {
     public static final Recipe createTestRecipe(Context context) {
         String[] ingredients = extractLinesFromString(context.getString(R.string.debug_ingredient_string));
         String[] directions = extractLinesFromString(context.getString(R.string.debug_directionsString));
-        return new Recipe(ingredients, directions);
+        return new Recipe(ingredients, directions, new Meal[5]);
     }
 
     private static String[] extractLinesFromString(String string) {
