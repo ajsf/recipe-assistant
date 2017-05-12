@@ -4,4 +4,6 @@
     <string name="debug_directionsString">In a large pot of boiling salted water, cook pasta until al dente.\nWhile the pasta is cooking, heat the olive oil over medium-high heat in a large sauté pan.\nAdd the onion, garlic, peppers, and sausage. Cook for about 5 minutes, stirring occasionally.\nDrain the pasta and pour into a large serving bowl. Stir in the onions, peppers, and sausage. Add the tomatoes, Parmesan cheese, and basil.\nSeason with salt and black pepper, to taste. Serve immediately.</string>
     <string name="ingredients_label">Ingredients</string>
     <string name="directions_label">Directions</string>
+    <string name="trans_img">transition_image</string>
+    <string name="trans_title">trans_title</string>
 </resources>
