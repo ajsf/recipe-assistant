@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Window;
 
 import com.example.aaron.recipeassistant.Model.MealList;
 import com.example.aaron.recipeassistant.Model.MealService;
@@ -23,10 +24,11 @@ public class BrowseRecipesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_browse_recipies);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview_browse_recipes);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        int columnCount = getResources().getInteger(R.integer.recipe_browse_columns);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, columnCount);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(this);
+        recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(this, columnCount);
         recyclerView.setAdapter(recipeRecyclerViewAdapter);
 
         MealService mealService = MealService.retrofit.create(MealService.class);
