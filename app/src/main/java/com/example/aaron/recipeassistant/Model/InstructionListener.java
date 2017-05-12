@@ -72,7 +72,6 @@ public class InstructionListener implements RecognitionListener {
         recognizer = SpeechRecognizerSetup.defaultSetup()
                 .setAcousticModel(new File(assetsDir, "en-us-ptm"))
                 .setDictionary(new File(assetsDir, "5660.dic"))
-                .setKeywordThreshold(1e-10f)
                 .getRecognizer();
 
         recognizer.addListener(this);
