@@ -3,33 +3,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_view"
+    android:padding="4dp"
+    app:cardCornerRadius="@dimen/recipe_browse_card_corner_radius"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:foreground="?android:selectableItemBackground"
     app:cardUseCompatPadding="true">
 
-    <android.support.constraint.ConstraintLayout
+    <RelativeLayout
+        android:background="@color/colorPrimaryDark"
+        android:id="@+id/card_view_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
         <ImageView
+            android:transitionName="@string/trans_img"
             android:id="@+id/recipe_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:foreground="@color/titleBackground"
             android:scaleType="centerCrop" />
 
-
         <TextView
-            android:padding="16dp"
+            android:gravity="bottom"
+            android:transitionName="@string/trans_title"
+            android:paddingStart="@dimen/recipe_browse_title_padding_horizontal"
+            android:paddingEnd="@dimen/recipe_browse_title_padding_horizontal"
+            android:paddingBottom="8dp"
             android:id="@+id/recipe_name"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textSize="50sp"
-            android:maxLength="35"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:textSize="@dimen/text_xlarge"
+            android:maxLines="6"
+            android:ellipsize="end"
             android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse"
             tools:text="Smoked Brisket" />
 
-
-    </android.support.constraint.ConstraintLayout>
+    </RelativeLayout>
 
 </android.support.v7.widget.CardView>
