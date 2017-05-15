@@ -47,7 +47,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
 
     @Override
     public RecipeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.recipe_card_view, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.recipe_list_item, parent, false);
         view.setFocusable(true);
         return new RecipeViewHolder(view);
     }
@@ -58,7 +58,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
         holder.meal = meal;
         String mealName = meal.getStrMeal().trim().toUpperCase().replace(" ", "\n");
         holder.recipeName.setText(mealName);
-        picasso.load(meal.getStrMealThumb()).fit()
+        picasso.load(meal.getStrMealThumb())
                 .into(holder.recipePhoto);
 
 
@@ -84,8 +84,8 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(imageSize, imageSize);
             recipeName.setLayoutParams(params);
             recipePhoto.setLayoutParams(params);
-
             itemView.setOnClickListener(this);
+            activity.startPostponedEnterTransition();
         }
 
         @Override
@@ -100,10 +100,9 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
             String transTitleName = context.getString(R.string.trans_title);
 
             Pair<View, String> transImage = Pair.create((View)recipePhoto, transImageName);
-            Pair<View, String> transTitle = Pair.create((View) recipeName, transTitleName);
+            //Pair<View, String> transTitle = Pair.create((View) recipeName, transTitleName);
 
-
-            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, transImage, transTitle);
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, transImage);
 
             activity.startActivity(intent, options.toBundle());
         }
