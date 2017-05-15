@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/recipe_list_item"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimaryDark"
+    android:stateListAnimator="@animator/raise"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardUseCompatPadding="true">
+
+    <ImageView
+        android:id="@+id/recipe_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:foreground="@drawable/raise_drawable"
+        android:scaleType="centerCrop"
+        android:transitionName="@string/trans_img" />
+
+    <TextView
+        android:id="@+id/recipe_name"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:ellipsize="end"
+        android:gravity="bottom"
+        android:maxLines="6"
+        android:paddingBottom="8dp"
+        android:paddingEnd="@dimen/recipe_browse_title_padding_horizontal"
+        android:paddingStart="@dimen/recipe_browse_title_padding_horizontal"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse"
+        android:textSize="@dimen/text_xlarge"
+        android:transitionName="@string/trans_title"
+        tools:text="Smoked Brisket" />
+
+</RelativeLayout>
