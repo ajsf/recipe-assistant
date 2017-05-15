@@ -9,12 +9,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.transition.Explode;
+import android.transition.Fade;
+import android.transition.Slide;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -54,6 +56,17 @@ public class ReadRecipeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_recipe);
 
+        Fade fade = new Fade();
+        Slide slide = new Slide();
+        Explode explode = new Explode();
+        explode.setDuration(1000);
+        slide.setDuration(1000);
+        fade.setDuration(1000);
+        getWindow().setEnterTransition(explode);
+        getWindow().setReturnTransition(fade);
+        getWindow().setAllowEnterTransitionOverlap(false);
+        getWindow().setAllowReturnTransitionOverlap(false);
+        
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
         ingredients = (TextView) findViewById(R.id.ingredients_text);

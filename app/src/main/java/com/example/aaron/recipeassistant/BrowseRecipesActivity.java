@@ -27,7 +27,16 @@ public class BrowseRecipesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        postponeEnterTransition();
         setContentView(R.layout.activity_browse_recipies);
+
+        Slide slide = new Slide();
+        slide.setDuration(600);
+        Fade fade = new Fade();
+        fade.setDuration(1400);
+        getWindow().setReenterTransition(slide);
+        getWindow().setExitTransition(slide);
+        getWindow().setAllowReturnTransitionOverlap(false);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview_browse_recipes);
         int columnCount = getResources().getInteger(R.integer.recipe_browse_columns);
