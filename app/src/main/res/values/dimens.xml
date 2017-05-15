@@ -2,6 +2,6 @@
 <resources>
     <dimen name="text_xlarge">24sp</dimen>
     <dimen name="recipe_browse_title_padding_horizontal">8dp</dimen>
-    <dimen name="recipe_browse_card_corner_radius">8dp</dimen>
+    <dimen name="read_recipe_card_corner_radius">2dp</dimen>
     <integer name="recipe_browse_columns">2</integer>
 </resources>
