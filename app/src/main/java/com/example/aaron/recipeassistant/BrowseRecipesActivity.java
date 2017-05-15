@@ -4,10 +4,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Fade;
+import android.transition.Slide;
 import android.view.Window;
 
+import com.example.aaron.recipeassistant.Model.Meal;
 import com.example.aaron.recipeassistant.Model.MealList;
 import com.example.aaron.recipeassistant.Model.MealService;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,7 +42,12 @@ public class BrowseRecipesActivity extends AppCompatActivity {
         call.enqueue(new Callback<MealList>() {
             @Override
             public void onResponse(Call<MealList> call, Response<MealList> response) {
-                recipeRecyclerViewAdapter.swapMealList(response.body());
+                MealList mealList = response.body();
+                List<Meal> meals = mealList.getMeals();
+                for (Meal meal : meals) {
+                    Picasso.with(BrowseRecipesActivity.this).load(meal.getStrMealThumb()).fetch();
+                }
+                recipeRecyclerViewAdapter.swapMealList(mealList);
             }
             @Override
             public void onFailure(Call<MealList> call, Throwable t) {

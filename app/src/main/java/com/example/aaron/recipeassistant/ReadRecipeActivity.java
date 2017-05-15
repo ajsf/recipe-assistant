@@ -182,7 +182,7 @@ public class ReadRecipeActivity extends AppCompatActivity {
     private void displayRecipe(Recipe recipe) {
         collapsingToolbarLayout.setTitle(recipe.getTitle().trim().toUpperCase());
 
-        Picasso.with(this).load(recipe.getImageUrl()).fit()
+        Picasso.with(this).load(recipe.getImageUrl())
                 .into(recipeImage);
 
         StringBuilder ingredientsBuilder = new StringBuilder();
@@ -199,6 +199,7 @@ public class ReadRecipeActivity extends AppCompatActivity {
         ingredientsBuilder.deleteCharAt(ingredientsBuilder.length() - 1);
         ingredients.setText(ingredientsBuilder.toString());
         directions.setText(directionsBuilder.toString());
+
     }
 
     @Override
