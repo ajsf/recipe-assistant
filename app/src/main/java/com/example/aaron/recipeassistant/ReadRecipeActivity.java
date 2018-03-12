@@ -66,7 +66,7 @@ public class ReadRecipeActivity extends AppCompatActivity {
         getWindow().setReturnTransition(fade);
         getWindow().setAllowEnterTransitionOverlap(false);
         getWindow().setAllowReturnTransitionOverlap(false);
-        
+
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
         ingredients = (TextView) findViewById(R.id.ingredients_text);
