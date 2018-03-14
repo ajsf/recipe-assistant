@@ -1,4 +1,4 @@
-package com.example.aaron.recipeassistant;
+package com.example.aaron.recipeassistant.browserecipes.ui;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -6,11 +6,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Fade;
 import android.transition.Slide;
-import android.view.Window;
 
-import com.example.aaron.recipeassistant.Model.Meal;
-import com.example.aaron.recipeassistant.Model.MealList;
-import com.example.aaron.recipeassistant.Model.MealService;
+import com.example.aaron.recipeassistant.model.RecipeDTO;
+import com.example.aaron.recipeassistant.model.RecipeList;
+import com.example.aaron.recipeassistant.browserecipes.networking.RecipeService;
+import com.example.aaron.recipeassistant.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -46,20 +46,20 @@ public class BrowseRecipesActivity extends AppCompatActivity {
         recipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(this, columnCount);
         recyclerView.setAdapter(recipeRecyclerViewAdapter);
 
-        MealService mealService = MealService.retrofit.create(MealService.class);
-        Call<MealList> call = mealService.getRandomSelection();
-        call.enqueue(new Callback<MealList>() {
+        RecipeService recipeService = RecipeService.retrofit.create(RecipeService.class);
+        Call<RecipeList> call = recipeService.getRandomSelection();
+        call.enqueue(new Callback<RecipeList>() {
             @Override
-            public void onResponse(Call<MealList> call, Response<MealList> response) {
-                MealList mealList = response.body();
-                List<Meal> meals = mealList.getMeals();
-                for (Meal meal : meals) {
+            public void onResponse(Call<RecipeList> call, Response<RecipeList> response) {
+                RecipeList recipeList = response.body();
+                List<RecipeDTO> meals = recipeList.getMeals();
+                for (RecipeDTO meal : meals) {
                     Picasso.with(BrowseRecipesActivity.this).load(meal.getStrMealThumb()).fetch();
                 }
-                recipeRecyclerViewAdapter.swapMealList(mealList);
+                recipeRecyclerViewAdapter.swapMealList(recipeList);
             }
             @Override
-            public void onFailure(Call<MealList> call, Throwable t) {
+            public void onFailure(Call<RecipeList> call, Throwable t) {
 
             }
         });

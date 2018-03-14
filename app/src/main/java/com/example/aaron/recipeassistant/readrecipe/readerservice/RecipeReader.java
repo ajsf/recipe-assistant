@@ -1,10 +1,12 @@
-package com.example.aaron.recipeassistant.Model;
+package com.example.aaron.recipeassistant.readrecipe.readerservice;
 
 import android.content.Context;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
 import android.util.Log;
+
+import com.example.aaron.recipeassistant.model.Recipe;
 
 import java.util.Locale;
 import java.util.Set;

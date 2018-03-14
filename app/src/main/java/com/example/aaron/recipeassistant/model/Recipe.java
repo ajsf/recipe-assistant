@@ -1,8 +1,7 @@
-package com.example.aaron.recipeassistant.Model;
+package com.example.aaron.recipeassistant.model;
 
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class Recipe implements Serializable {
 

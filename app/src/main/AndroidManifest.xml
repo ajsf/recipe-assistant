@@ -13,12 +13,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ReadRecipeActivity"
-            android:parentActivityName=".BrowseRecipesActivity"
+        <activity android:name=".readrecipe.ReadRecipeActivity"
+            android:parentActivityName=".browserecipes.ui.BrowseRecipesActivity"
             >
 p
         </activity>
-        <activity android:name=".BrowseRecipesActivity"
+        <activity android:name=".browserecipes.ui.BrowseRecipesActivity"
             android:launchMode="singleTask"
             >
             <intent-filter>

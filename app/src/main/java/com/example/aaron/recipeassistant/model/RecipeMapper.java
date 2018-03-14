@@ -1,20 +1,16 @@
-package com.example.aaron.recipeassistant.Model;
+package com.example.aaron.recipeassistant.model;
 
 import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by aaron on 5/8/17.
- */
+public class RecipeMapper {
 
-public class MealToRecipeConverter {
-
-    private final Meal meal;
+    private final RecipeDTO meal;
     private List<String> ingredientsList = new ArrayList<>();
 
-    public MealToRecipeConverter(Meal meal) {
+    public RecipeMapper(RecipeDTO meal) {
         this.meal = meal;
     }
 

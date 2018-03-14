@@ -1,6 +1,6 @@
-package com.example.aaron.recipeassistant.Model;
+package com.example.aaron.recipeassistant.model;
 
-public class Meal {
+public class RecipeDTO {
 
     private String idMeal;
     private String strMeal;

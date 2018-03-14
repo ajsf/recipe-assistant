@@ -1,4 +1,4 @@
-package com.example.aaron.recipeassistant;
+package com.example.aaron.recipeassistant.readrecipe;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -20,10 +20,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.aaron.recipeassistant.Model.InstructionListener;
-import com.example.aaron.recipeassistant.Model.Recipe;
-import com.example.aaron.recipeassistant.Model.RecipeReader;
-import com.example.aaron.recipeassistant.Model.TestRecipeData;
+import com.example.aaron.recipeassistant.R;
+import com.example.aaron.recipeassistant.readrecipe.voicerecognitionservice.InstructionListener;
+import com.example.aaron.recipeassistant.model.Recipe;
+import com.example.aaron.recipeassistant.readrecipe.readerservice.RecipeReader;
+import com.example.aaron.recipeassistant.model.TestRecipeData;
 import com.squareup.picasso.Picasso;
 
 import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;

@@ -1,4 +1,4 @@
-package com.example.aaron.recipeassistant.Model;
+package com.example.aaron.recipeassistant.model;
 
 import android.content.Context;
 
