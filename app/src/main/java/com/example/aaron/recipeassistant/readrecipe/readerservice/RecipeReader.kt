@@ -4,11 +4,11 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.OnLifecycleEvent
 import android.content.Context
+import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import java.util.*
-import kotlin.collections.HashMap
 
 class RecipeReader(private val context: Context, private val listener: UtteranceProgressListener) : LifecycleObserver {
 
@@ -48,10 +48,6 @@ class RecipeReader(private val context: Context, private val listener: Utterance
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "This language is not supported")
             }
-            //val voices = tts?.voices
-            //val voiceName = "en-us-x-sfg#female_2-local"
-            //val voice = voices?.firstOrNull { it.name == voiceName }
-            //tts?.voice = voice
             tts?.setOnUtteranceProgressListener(listener)
 
         } else {
@@ -60,13 +56,12 @@ class RecipeReader(private val context: Context, private val listener: Utterance
     }
 
     fun read(text: String) {
-        val map = HashMap<String, String>()
-        map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "Speaking")
-        tts?.speak(text, TextToSpeech.QUEUE_FLUSH, map)
+        val params = Bundle()
+        params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "Speaking")
+        tts?.speak(text, TextToSpeech.QUEUE_FLUSH, params, "Speaking")
     }
 
     fun stopReading() {
         tts?.stop()
-
     }
 }

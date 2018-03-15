@@ -11,21 +11,19 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.transition.Fade
-import android.util.Log
+import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageButton
 import com.example.aaron.recipeassistant.R
 import com.example.aaron.recipeassistant.model.Recipe
 import com.example.aaron.recipeassistant.readrecipe.voicerecognitionservice.InstructionListener
-import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_read_recipe.*
 
 class ReadRecipeActivity : AppCompatActivity() {
 
     private var instructionListener: InstructionListener? = null
-    private lateinit var recipe: Recipe
     private var listening: Boolean = false
     private lateinit var audioManager: AudioManager
     private lateinit var listenerToggleBtn: MenuItem
@@ -34,12 +32,40 @@ class ReadRecipeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_read_recipe)
-        recipe = intent.extras.getParcelable("recipe")
-        viewModel = ViewModelProviders.of(this).get(ReadRecipeViewModel::class.java)
-        viewModel.readingDirection.observe(this, Observer { it?.let { setPlayButtonIcon(btn_play_direction, it) } })
-        viewModel.readingIngredient.observe(this, Observer { it?.let { setPlayButtonIcon(btn_play_ingredient, it) } })
-        viewModel.recipe.value = recipe
         initActivity()
+    }
+
+    private fun initActivity() {
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        setSupportActionBar(toolbar)
+        initTransitions()
+        initViewModel()
+        initButtons()
+    }
+
+    private fun initTransitions() {
+        val fade = Fade()
+        fade.duration = 600
+        window.returnTransition = fade
+        window.allowReturnTransitionOverlap = true
+        recipe_details_layout.alpha = 0.0f
+        toolbar.alpha = 0f
+        toolbar.title = ""
+    }
+
+    private fun initViewModel() {
+        val recipe = intent.extras.getParcelable("recipe") as Recipe
+        viewModel = ViewModelProviders.of(this).get(ReadRecipeViewModel::class.java)
+        viewModel.readingDirection.observe(this, Observer {
+            it?.let { setPlayButtonIcon(btn_play_direction, it) }
+        })
+        viewModel.readingIngredient.observe(this, Observer {
+            it?.let { setPlayButtonIcon(btn_play_ingredient, it) }
+        })
+        viewModel.recipe.observe(this, Observer {
+            it?.let { displayRecipe(it) }
+        })
+        viewModel.recipe.value = recipe
     }
 
     private fun setPlayButtonIcon(btn: ImageButton, isPlaying: Boolean) {
@@ -48,43 +74,6 @@ class ReadRecipeActivity : AppCompatActivity() {
         } else {
             btn.setImageResource(R.drawable.ic_play_arrow_black_24dp)
         }
-    }
-
-    override fun onEnterAnimationComplete() {
-        super.onEnterAnimationComplete()
-        displayRecipe(recipe)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.i("ReadRecipeActivity", "OnResume")
-    }
-
-    override fun onDestroy() {
-        Log.i("ReadRecipeActivity", "onDestroy")
-        super.onDestroy()
-        if (instructionListener != null) {
-            instructionListener?.destroy()
-        }
-    }
-
-    private fun initActivity() {
-        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        setSupportActionBar(toolbar)
-        collapsing_toolbar.setExpandedTitleColor(getColor(R.color.colorLightest))
-        initTransitions()
-        initButtons()
-    }
-
-    private fun initTransitions() {
-        postponeEnterTransition()
-        val fade = Fade()
-        fade.duration = 600
-        window.returnTransition = fade
-        window.allowReturnTransitionOverlap = true
-        recipe_details_layout.alpha = 0.0f
-        toolbar.alpha = 0f
-        toolbar.title = ""
     }
 
     private fun initButtons() {
@@ -114,25 +103,36 @@ class ReadRecipeActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
+    private fun displayRecipe(recipe: Recipe) {
         displayRecipeImage(recipe)
+        val (ingredients, directions) = formatRecipeForDisplay(recipe)
+        ingredients_text.text = ingredients
+        directions_text.text = directions
+        collapsing_toolbar.title = recipe.title.trim { it <= ' ' }.toUpperCase()
+        recipe_details_layout.animate().alpha(1.0f).duration = 1000
+        toolbar.animate().alpha(1.0f).duration = 1000
     }
 
-    private fun displayRecipe(recipe: Recipe?) {
+    private fun displayRecipeImage(recipe: Recipe) {
+        val metrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(metrics)
+        val width = metrics.widthPixels
+        val height = resources.getDimension(R.dimen.collapsing_toolbar_height).toInt()
+        Picasso.with(this)
+                .load(recipe.imageUrl)
+                .resize(width, height)
+                .into(recipe_header_image)
+    }
+
+    private fun formatRecipeForDisplay(recipe: Recipe): Pair<String, String> {
         val ingredientsBuilder = StringBuilder()
         val directionsBuilder = StringBuilder()
-
-        recipe?.ingredients?.forEach { ingredientsBuilder.append(it).append("\n") }
-        recipe?.directions?.forEach { directionsBuilder.append(it).append("\n\n") }
-
+        recipe.ingredients.forEach { ingredientsBuilder.append(it).append("\n") }
+        recipe.directions.forEach { directionsBuilder.append(it).append("\n\n") }
         val length = directionsBuilder.length
         directionsBuilder.delete(length - 2, length)
         ingredientsBuilder.deleteCharAt(ingredientsBuilder.length - 1)
-        ingredients_text.text = ingredientsBuilder.toString()
-        directions_text.text = directionsBuilder.toString()
-        recipe_details_layout.animate().alpha(1.0f).duration = 1000
-        toolbar.animate().alpha(1.0f).setDuration(1000).withEndAction { toolbar.title = recipe?.title?.trim { it <= ' ' }?.toUpperCase() }
+        return ingredientsBuilder.toString() to directionsBuilder.toString()
     }
 
     private fun requestAudioPermission() {
@@ -152,21 +152,6 @@ class ReadRecipeActivity : AppCompatActivity() {
             listenerToggleBtn.setIcon(R.drawable.ic_microphone_outline_white_36dp)
             requestAudioPermission()
         }
-    }
-
-    private fun displayRecipeImage(recipe: Recipe) {
-        Picasso.with(this)
-                .load(recipe.imageUrl)
-                .fit()
-                .into(recipe_header_image, object : Callback {
-                    override fun onSuccess() {
-                        startPostponedEnterTransition()
-                    }
-
-                    override fun onError() {
-                        startPostponedEnterTransition()
-                    }
-                })
     }
 
     companion object {
