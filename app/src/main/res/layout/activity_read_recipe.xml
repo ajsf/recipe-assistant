@@ -1,43 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorLight">
 
     <android.support.design.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/group_button"
         android:fitsSystemWindows="true">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="256dp"
+            android:layout_height="@dimen/collapsing_toolbar_height"
             android:fitsSystemWindows="true"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             <net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout
                 android:id="@+id/collapsing_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:fitsSystemWindows="true"
                 app:contentScrim="?attr/colorPrimary"
                 app:expandedTitleGravity="bottom"
                 app:expandedTitleMarginBottom="8dp"
                 app:expandedTitleMarginEnd="64dp"
                 app:expandedTitleMarginStart="24dp"
+                app:collapsedTitleGravity="start"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:maxLines="4">
 
                 <ImageView
                     android:id="@+id/recipe_header_image"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="@dimen/collapsing_toolbar_height"
                     android:foreground="@color/photoTint"
-                    android:scaleType="centerCrop"
                     android:transitionName="@string/trans_img"
                     app:layout_collapseMode="parallax" />
 
@@ -49,7 +50,6 @@
                     app:layout_collapseMode="pin"
                     app:layout_scrollFlags="scroll|enterAlways" />
 
-
             </net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout>
 
         </android.support.design.widget.AppBarLayout>
@@ -59,131 +59,181 @@
             android:layout_height="wrap_content"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            <LinearLayout
+                android:id="@+id/recipe_details_layout"
+                xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:paddingTop="2dp"
+                android:orientation="vertical"
                 tools:context="com.example.aaron.recipeassistant.readrecipe.ReadRecipeActivity">
 
                 <android.support.v7.widget.CardView
                     android:id="@+id/ingredients_card_view"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/colorLightest"
                     android:paddingBottom="8dp"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
-                    app:cardCornerRadius="@dimen/read_recipe_card_corner_radius"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:cardCornerRadius="@dimen/read_recipe_card_corner_radius">
 
-                    <LinearLayout
+                    <android.support.constraint.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:paddingTop="6dp">
+
+                        <ImageButton
+                            android:paddingLeft="16dp"
+                            android:id="@+id/btn_prev_ingredient"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:src="@drawable/ic_skip_previous_black_24dp"
+                            app:layout_constraintBottom_toTopOf="@+id/ingredients_text"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageButton
+                            android:id="@+id/btn_play_ingredient"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_play_arrow_black_24dp"
+                            app:layout_constraintBottom_toTopOf="@+id/ingredients_text"
+                            app:layout_constraintLeft_toRightOf="@id/btn_prev_ingredient"
+                            app:layout_constraintRight_toLeftOf="@+id/btn_next_ingredient"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageButton
+                            android:id="@+id/btn_next_ingredient"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:src="@drawable/ic_skip_next_black_24dp"
+                            app:layout_constraintBottom_toTopOf="@id/ingredients_text"
+                            app:layout_constraintLeft_toRightOf="@id/btn_play_ingredient"
+                            app:layout_constraintRight_toLeftOf="@+id/vertical_guideline"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <android.support.constraint.Guideline
+                            android:id="@+id/vertical_guideline"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_percent=".50"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent" />
 
                         <TextView
                             android:id="@+id/ingredients_label"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
+                            android:paddingEnd="16dp"
                             android:text="@string/ingredients_label"
-                            android:textAlignment="center"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
                             android:id="@+id/ingredients_text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:lineSpacingExtra="2sp"
-                            android:paddingBottom="8dp"
-                            android:paddingLeft="8dp"
-                            android:paddingRight="8dp"
-                            android:textAppearance="@style/TextAppearance.AppCompat"
-
+                            android:padding="8dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                             app:layout_constraintTop_toBottomOf="@id/ingredients_label"
                             tools:text="@string/debug_ingredient_string" />
 
-                    </LinearLayout>
-
-
+                    </android.support.constraint.ConstraintLayout>
                 </android.support.v7.widget.CardView>
 
                 <android.support.v7.widget.CardView
                     android:id="@+id/directions_card_view"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
                     android:layout_marginTop="4dp"
-                    android:paddingTop="4dp"
+                    android:backgroundTint="@color/colorLightest"
+                    android:paddingBottom="8dp"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
-                    app:cardCornerRadius="@dimen/read_recipe_card_corner_radius"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/ingredients_card_view">
+                    android:paddingTop="4dp"
+                    app:cardCornerRadius="@dimen/read_recipe_card_corner_radius">
 
-                    <LinearLayout
+                    <android.support.constraint.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:paddingTop="6dp">
+
+                        <ImageButton
+                            android:id="@+id/btn_prev_direction"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:paddingLeft="16dp"
+                            android:src="@drawable/ic_skip_previous_black_24dp"
+                            app:layout_constraintBottom_toTopOf="@id/directions_text"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageButton
+                            android:id="@+id/btn_play_direction"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:src="@drawable/ic_play_arrow_black_24dp"
+                            app:layout_constraintBottom_toTopOf="@id/directions_text"
+                            app:layout_constraintLeft_toRightOf="@id/btn_prev_direction"
+                            app:layout_constraintRight_toLeftOf="@+id/btn_next_direction"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageButton
+                            android:id="@+id/btn_next_direction"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:src="@drawable/ic_skip_next_black_24dp"
+                            app:layout_constraintBottom_toTopOf="@id/directions_text"
+                            app:layout_constraintLeft_toRightOf="@id/btn_play_direction"
+                            app:layout_constraintRight_toLeftOf="@+id/vertical_guideline2"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <android.support.constraint.Guideline
+                            android:id="@+id/vertical_guideline2"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_percent=".50"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent" />
 
                         <TextView
                             android:id="@+id/directions_label"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
+                            android:paddingEnd="16dp"
                             android:text="@string/directions_label"
-                            android:textAlignment="center"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
                             android:id="@+id/directions_text"
+                            app:layout_constraintTop_toBottomOf="@id/directions_label"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:lineSpacingExtra="2sp"
-                            android:paddingBottom="8dp"
-                            android:paddingLeft="8dp"
-                            android:paddingRight="8dp"
-                            android:textAppearance="@style/TextAppearance.AppCompat"
+                            android:padding="8dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                             tools:text="@string/debug_directionsString" />
-                    </LinearLayout>
+                    </android.support.constraint.ConstraintLayout>
                 </android.support.v7.widget.CardView>
-            </android.support.constraint.ConstraintLayout>
+            </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.CoordinatorLayout>
-
-    <android.support.v7.widget.LinearLayoutCompat
-        android:id="@+id/group_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
-
-        <Button
-            android:id="@+id/action_list_ingredients"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Ingredients" />
-
-        <Button
-            android:id="@+id/action_prev_direction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:text="Prev Direction" />
-
-        <Button
-            android:id="@+id/action_next_direction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Next Direction" />
-
-
-    </android.support.v7.widget.LinearLayoutCompat>
-
-
 </RelativeLayout>

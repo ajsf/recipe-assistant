@@ -5,6 +5,11 @@
     android:id="@+id/recipe_list_item"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:focusable="true"
+    android:clickable="true"
+    android:layout_marginTop="2dp"
+    android:layout_marginLeft="1dp"
+    android:layout_marginRight="1dp"
     android:background="@color/colorPrimaryDark"
     android:stateListAnimator="@animator/raise"
     android:foreground="?attr/selectableItemBackground"
@@ -16,10 +21,11 @@
         android:layout_height="wrap_content"
         android:foreground="@drawable/raise_drawable"
         android:scaleType="centerCrop"
-        android:transitionName="@string/trans_img" />
+        />
 
     <TextView
         android:id="@+id/recipe_name"
+        android:textColor="@color/colorLightest"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:ellipsize="end"
@@ -30,7 +36,6 @@
         android:paddingStart="@dimen/recipe_browse_title_padding_horizontal"
         android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse"
         android:textSize="@dimen/text_xlarge"
-        android:transitionName="@string/trans_title"
         tools:text="Smoked Brisket" />
 
 </RelativeLayout>
