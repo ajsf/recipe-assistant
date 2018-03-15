@@ -11,7 +11,7 @@ interface RecipesRepository {
 
 class RecipesRepositoryImpl : RecipesRepository {
 
-    private val retrofit = RecipeService.retrofit.create(RecipeService::class.java)
+    private val retrofit = RecipeService.retrofit?.create(RecipeService::class.java)
 
-    override fun getRecipes() = retrofit.randomSelection().map { it.toRecipeList() }
+    override fun getRecipes() = retrofit?.randomSelection()?.map { it.toRecipeList() } ?: Single.error(Throwable("Error"))
 }

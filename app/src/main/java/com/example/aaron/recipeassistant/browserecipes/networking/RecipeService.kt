@@ -18,7 +18,7 @@ interface RecipeService {
     fun randomMeal(): Single<RecipeListDTO>
 
     companion object {
-        val retrofit = Retrofit.Builder()
+        val retrofit : Retrofit? = Retrofit.Builder()
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .baseUrl("http://www.themealdb.com/api/json/v1/1/")
                 .addConverterFactory(MoshiConverterFactory.create())

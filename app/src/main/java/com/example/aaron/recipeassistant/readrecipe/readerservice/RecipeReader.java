@@ -39,7 +39,6 @@ public class RecipeReader {
                 }
             }
         });
-
     }
 
     private void speak(final String text, final int queueMode) {
