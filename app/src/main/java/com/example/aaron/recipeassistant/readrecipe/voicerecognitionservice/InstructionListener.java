@@ -108,7 +108,7 @@ public class InstructionListener implements RecognitionListener {
     }
 
     private void processInstruction(String instruction) {
-        switch (instruction) {
+/*        switch (instruction) {
             case INGREDIENTS:
                 recipeReader.readIngredients();
                 break;
@@ -124,7 +124,7 @@ public class InstructionListener implements RecognitionListener {
             case FINAL_DIRECTION:
                 recipeReader.readLastDirection();
                 break;
-        }
+        }*/
     }
 
     @Override

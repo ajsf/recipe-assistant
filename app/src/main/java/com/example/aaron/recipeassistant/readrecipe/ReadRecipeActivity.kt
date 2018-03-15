@@ -1,6 +1,8 @@
 package com.example.aaron.recipeassistant.readrecipe
 
 import android.Manifest
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.pm.PackageManager
 import android.media.AudioManager
@@ -12,9 +14,9 @@ import android.transition.Fade
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageButton
 import com.example.aaron.recipeassistant.R
 import com.example.aaron.recipeassistant.model.Recipe
-import com.example.aaron.recipeassistant.readrecipe.readerservice.RecipeReader
 import com.example.aaron.recipeassistant.readrecipe.voicerecognitionservice.InstructionListener
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -22,34 +24,30 @@ import kotlinx.android.synthetic.main.activity_read_recipe.*
 
 class ReadRecipeActivity : AppCompatActivity() {
 
-    private var recipeReader: RecipeReader? = null
     private var instructionListener: InstructionListener? = null
     private lateinit var recipe: Recipe
     private var listening: Boolean = false
     private lateinit var audioManager: AudioManager
     private lateinit var listenerToggleBtn: MenuItem
-
-    private val audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
-        when (focusChange) {
-            AudioManager.AUDIOFOCUS_LOSS -> {
-                if (instructionListener != null) {
-                    instructionListener!!.destroy()
-                }
-                recipeReader?.destroy()
-                instructionListener = null
-                recipeReader = null
-            }
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> recipeReader?.stopReading()
-            AudioManager.AUDIOFOCUS_GAIN -> {
-            }
-        }
-    }
+    private lateinit var viewModel: ReadRecipeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_read_recipe)
         recipe = intent.extras.getParcelable("recipe")
+        viewModel = ViewModelProviders.of(this).get(ReadRecipeViewModel::class.java)
+        viewModel.readingDirection.observe(this, Observer { it?.let { setPlayButtonIcon(btn_play_direction, it) } })
+        viewModel.readingIngredient.observe(this, Observer { it?.let { setPlayButtonIcon(btn_play_ingredient, it) } })
+        viewModel.recipe.value = recipe
         initActivity()
+    }
+
+    private fun setPlayButtonIcon(btn: ImageButton, isPlaying: Boolean) {
+        if (isPlaying) {
+            btn.setImageResource(R.drawable.ic_stop_black_24dp)
+        } else {
+            btn.setImageResource(R.drawable.ic_play_arrow_black_24dp)
+        }
     }
 
     override fun onEnterAnimationComplete() {
@@ -60,9 +58,6 @@ class ReadRecipeActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         Log.i("ReadRecipeActivity", "OnResume")
-        if (recipeReader == null) {
-            requestAudioFocus()
-        }
     }
 
     override fun onDestroy() {
@@ -71,7 +66,6 @@ class ReadRecipeActivity : AppCompatActivity() {
         if (instructionListener != null) {
             instructionListener?.destroy()
         }
-        recipeReader?.destroy()
     }
 
     private fun initActivity() {
@@ -94,9 +88,12 @@ class ReadRecipeActivity : AppCompatActivity() {
     }
 
     private fun initButtons() {
-        btn_play_direction.setOnClickListener { recipeReader?.readIngredients() }
-        btn_prev_direction.setOnClickListener { recipeReader?.readPreviousDirection() }
-        btn_next_direction.setOnClickListener { recipeReader?.readNextDirection() }
+        btn_play_ingredient.setOnClickListener { viewModel.readIngredient() }
+        btn_next_ingredient.setOnClickListener { viewModel.nextIngredient() }
+        btn_prev_ingredient.setOnClickListener { viewModel.prevIngredient() }
+        btn_play_direction.setOnClickListener { viewModel.readDirection() }
+        btn_prev_direction.setOnClickListener { viewModel.prevDirection() }
+        btn_next_direction.setOnClickListener { viewModel.nextDirection() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -144,35 +141,6 @@ class ReadRecipeActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), PERMISSIONS_REQUEST_RECORD_AUDIO)
             return
         }
-        buildListener()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSIONS_REQUEST_RECORD_AUDIO) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                requestAudioFocus()
-            } else {
-                finish()
-            }
-        }
-    }
-
-    private fun requestAudioFocus() {
-        val result = audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
-        when (result) {
-            AudioManager.AUDIOFOCUS_REQUEST_GRANTED -> buildReader()
-        }
-    }
-
-    private fun buildReader() {
-        recipeReader = RecipeReader(this@ReadRecipeActivity)
-        recipeReader?.setRecipe(recipe)
-    }
-
-    private fun buildListener() {
-        instructionListener = InstructionListener(this@ReadRecipeActivity, recipeReader)
-        listening = true
     }
 
     private fun toggleListener() {
