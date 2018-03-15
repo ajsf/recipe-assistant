@@ -15,7 +15,7 @@ public interface RecipeService {
     @GET("randomselection.php")
     Call<RecipeList> getRandomSelection();
 
-    public static final Retrofit retrofit = new Retrofit.Builder()
+    Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("http://www.themealdb.com/api/json/v1/1/")
             .addConverterFactory(MoshiConverterFactory.create())
             .build();

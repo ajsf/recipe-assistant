@@ -9,9 +9,6 @@ import com.example.aaron.recipeassistant.readrecipe.readerservice.RecipeReader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
 
 import edu.cmu.pocketsphinx.Assets;
 import edu.cmu.pocketsphinx.Hypothesis;
@@ -28,10 +25,6 @@ public class InstructionListener implements RecognitionListener {
     private static final String NEXT_DIRECTION = "NEXT DIRECTION";
     private static final String FIRST_DIRECTION = "FIRST DIRECTION";
     private static final String FINAL_DIRECTION = "FINAL DIRECTION";
-
-    private static final List<String> INSTRUCTIONS_LIST = Arrays.asList(INGREDIENTS, PREV_DIRECTION, NEXT_DIRECTION,
-            FIRST_DIRECTION, FINAL_DIRECTION);
-
 
     private SpeechRecognizer recognizer;
     private Context context;
@@ -77,11 +70,8 @@ public class InstructionListener implements RecognitionListener {
                 .getRecognizer();
 
         recognizer.addListener(this);
-        //File languageModel = new File(assetsDir, "5660.lm");
-        //recognizer.addNgramSearch(INSTRUCTION_SEARCH, languageModel);
         File instructionsGrammer = new File(assetsDir, "5660.gram");
         recognizer.addKeywordSearch(INSTRUCTION_SEARCH, instructionsGrammer);
-
         recognizer.startListening(INSTRUCTION_SEARCH);
     }
 
@@ -150,5 +140,5 @@ public class InstructionListener implements RecognitionListener {
     @Override
     public void onTimeout() {
     }
-
+    
 }

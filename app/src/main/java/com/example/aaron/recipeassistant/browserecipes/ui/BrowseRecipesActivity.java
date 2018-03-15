@@ -21,7 +21,6 @@ import retrofit2.Response;
 
 public class BrowseRecipesActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
     private RecipeRecyclerViewAdapter recipeRecyclerViewAdapter;
 
     @Override
@@ -30,15 +29,12 @@ public class BrowseRecipesActivity extends AppCompatActivity {
         postponeEnterTransition();
         setContentView(R.layout.activity_browse_recipies);
 
-        Slide slide = new Slide();
-        slide.setDuration(600);
         Fade fade = new Fade();
-        fade.setDuration(1400);
-        getWindow().setReenterTransition(slide);
-        getWindow().setExitTransition(slide);
-        getWindow().setAllowReturnTransitionOverlap(false);
+        fade.setDuration(600);
+        getWindow().setReenterTransition(fade);
+        postponeEnterTransition();
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview_browse_recipes);
+        RecyclerView recyclerView = findViewById(R.id.recyclerview_browse_recipes);
         int columnCount = getResources().getInteger(R.integer.recipe_browse_columns);
         GridLayoutManager layoutManager = new GridLayoutManager(this, columnCount);
         recyclerView.setLayoutManager(layoutManager);
@@ -63,5 +59,11 @@ public class BrowseRecipesActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startPostponedEnterTransition();
     }
 }

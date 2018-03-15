@@ -1,10 +1,8 @@
 package com.example.aaron.recipeassistant.model;
 
-
 import java.io.Serializable;
 
 public class Recipe implements Serializable {
-
 
     private String[] ingredients;
     private String[] directions;

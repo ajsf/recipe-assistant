@@ -15,11 +15,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.aaron.recipeassistant.R;
+import com.example.aaron.recipeassistant.model.Recipe;
 import com.example.aaron.recipeassistant.model.RecipeDTO;
 import com.example.aaron.recipeassistant.model.RecipeList;
 import com.example.aaron.recipeassistant.model.RecipeMapper;
-import com.example.aaron.recipeassistant.model.Recipe;
-import com.example.aaron.recipeassistant.R;
 import com.example.aaron.recipeassistant.readrecipe.ReadRecipeActivity;
 import com.squareup.picasso.Picasso;
 
@@ -31,7 +31,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
     private int imageSize;
     private Picasso picasso;
 
-    public RecipeRecyclerViewAdapter(@NonNull Activity activity, int columnCount) {
+    RecipeRecyclerViewAdapter(@NonNull Activity activity, int columnCount) {
         this.context = activity;
         this.activity = activity;
 
@@ -39,7 +39,6 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
         activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         imageSize = (displayMetrics.widthPixels / columnCount);
         picasso = Picasso.with(context);
-        //picasso.setIndicatorsEnabled(true);
     }
 
     void swapMealList(RecipeList newRecipeList) {
@@ -62,8 +61,6 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
         holder.recipeName.setText(mealName);
         picasso.load(meal.getStrMealThumb())
                 .into(holder.recipePhoto);
-
-
     }
 
     @Override
@@ -78,11 +75,11 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
         private final TextView recipeName;
         private RecipeDTO meal;
 
-        public RecipeViewHolder(View itemView) {
+        RecipeViewHolder(View itemView) {
             super(itemView);
 
-            recipePhoto = (ImageView) itemView.findViewById(R.id.recipe_photo);
-            recipeName = (TextView) itemView.findViewById(R.id.recipe_name);
+            recipePhoto = itemView.findViewById(R.id.recipe_photo);
+            recipeName = itemView.findViewById(R.id.recipe_name);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(imageSize, imageSize);
             recipeName.setLayoutParams(params);
             recipePhoto.setLayoutParams(params);
@@ -99,13 +96,8 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
             intent.putExtra("recipe", recipe);
 
             String transImageName = context.getString(R.string.trans_img);
-            String transTitleName = context.getString(R.string.trans_title);
-
-            Pair<View, String> transImage = Pair.create((View)recipePhoto, transImageName);
-            //Pair<View, String> transTitle = Pair.create((View) recipeName, transTitleName);
-
+            Pair<View, String> transImage = Pair.create((View) recipePhoto, transImageName);
             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, transImage);
-
             activity.startActivity(intent, options.toBundle());
         }
     }

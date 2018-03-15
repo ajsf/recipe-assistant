@@ -13,16 +13,13 @@ import java.util.Set;
 
 public class RecipeReader {
 
-    //private Context context;
     private TextToSpeech tts;
     private Recipe recipe;
 
     private int currentDirection = -1;
     private int totalDirections;
 
-
     public RecipeReader(Context context) {
-        //this.context = context;
         tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -47,11 +44,7 @@ public class RecipeReader {
     }
 
     private void speak(final String text, final int queueMode) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            tts.speak(text, queueMode, null, null);
-        } else {
-            tts.speak(text, queueMode, null);
-        }
+        tts.speak(text, queueMode, null, null);
     }
 
     public void setRecipe(Recipe recipe) {

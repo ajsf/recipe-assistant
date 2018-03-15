@@ -9,22 +9,21 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.transition.Explode;
 import android.transition.Fade;
-import android.transition.Slide;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.aaron.recipeassistant.R;
 import com.example.aaron.recipeassistant.readrecipe.voicerecognitionservice.InstructionListener;
 import com.example.aaron.recipeassistant.model.Recipe;
 import com.example.aaron.recipeassistant.readrecipe.readerservice.RecipeReader;
-import com.example.aaron.recipeassistant.model.TestRecipeData;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
@@ -40,54 +39,53 @@ public class ReadRecipeActivity extends AppCompatActivity {
 
     private ImageView recipeImage;
 
+    private LinearLayout recipeDetailsLayout;
+
     private Recipe recipe;
     private boolean listening;
 
     private AudioManager audioManager;
 
-    private Toolbar toolbar;
-    private CollapsingToolbarLayout collapsingToolbarLayout;
-
     private MenuItem listenerToggle;
+    private Toolbar toolbar;
 
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+        protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_recipe);
 
         Fade fade = new Fade();
-        Slide slide = new Slide();
-        Explode explode = new Explode();
-        explode.setDuration(1000);
-        slide.setDuration(1000);
-        fade.setDuration(1000);
-        getWindow().setEnterTransition(explode);
+        fade.setDuration(600);
         getWindow().setReturnTransition(fade);
-        getWindow().setAllowEnterTransitionOverlap(false);
-        getWindow().setAllowReturnTransitionOverlap(false);
+        getWindow().setAllowReturnTransitionOverlap(true);
+        postponeEnterTransition();
 
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
-        ingredients = (TextView) findViewById(R.id.ingredients_text);
-        directions = (TextView) findViewById(R.id.directions_text);
+        ingredients = findViewById(R.id.ingredients_text);
+        directions = findViewById(R.id.directions_text);
 
-        recipeImage = (ImageView) findViewById(R.id.recipe_header_image);
+        recipeImage = findViewById(R.id.recipe_header_image);
 
+        recipeDetailsLayout = findViewById(R.id.recipe_details_layout);
+        recipeDetailsLayout.setAlpha(0.0f);
         recipe = (Recipe) getIntent().getSerializableExtra("recipe");
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setAlpha(0f);
+        toolbar.setTitle("");
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar);
+        collapsingToolbarLayout.setExpandedTitleColor(getColor(R.color.colorLightest));
 
         initButtons();
-        initRecipe();
         listening = false;
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -149,30 +147,23 @@ public class ReadRecipeActivity extends AppCompatActivity {
         }
     }
 
-    private void initRecipe() {
-        if (recipe == null) {
-            recipe = TestRecipeData.createTestRecipe(this);
-        }
-        displayRecipe(recipe);
-    }
-
     private void initButtons() {
-        Button actionListIngredients = (Button) findViewById(R.id.action_list_ingredients);
-        actionListIngredients.setOnClickListener(new View.OnClickListener() {
+        ImageButton btnRepeatDirection = findViewById(R.id.btn_play_direction);
+        btnRepeatDirection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 recipeReader.readIngredients();
             }
         });
-        Button actionPreviousDirection = (Button) findViewById(R.id.action_prev_direction);
-        actionPreviousDirection.setOnClickListener(new View.OnClickListener() {
+        ImageButton btnPrevDirection = findViewById(R.id.btn_prev_direction);
+        btnPrevDirection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 recipeReader.readPreviousDirection();
             }
         });
-        Button actionNextDirection = (Button) findViewById(R.id.action_next_direction);
-        actionNextDirection.setOnClickListener(new View.OnClickListener() {
+        ImageButton btnNextDirection = findViewById(R.id.btn_next_direction);
+        btnNextDirection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 recipeReader.readNextDirection();
@@ -183,44 +174,59 @@ public class ReadRecipeActivity extends AppCompatActivity {
     private void toggleListener() {
         if (listening) {
             listenerToggle.setIcon(R.drawable.ic_microphone_off_white_36dp);
-            //actionListenerToggle.setImageResource(R.drawable.ic_microphone_off_black_36dp);
             instructionListener.destroy();
             listening = false;
         } else {
             listenerToggle.setIcon(R.drawable.ic_microphone_outline_white_36dp);
-            //actionListenerToggle.setImageResource(R.drawable.ic_microphone_outline_black_36dp);
             requestAudioPermission();
         }
     }
 
-    private void displayRecipe(Recipe recipe) {
-        collapsingToolbarLayout.setTitle(recipe.getTitle().trim().toUpperCase());
+    private void displayRecipeImage(final Recipe recipe) {
+        Picasso.with(this)
+                .load(recipe.getImageUrl())
+                .fit()
+                .into(recipeImage, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        startPostponedEnterTransition();
+                    }
 
-        Picasso.with(this).load(recipe.getImageUrl())
-                .into(recipeImage);
+                    @Override
+                    public void onError() {
+                        startPostponedEnterTransition();
+                    }
+                });
+    }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        displayRecipeImage(recipe);
+    }
+
+    private void displayRecipe(final Recipe recipe) {
         StringBuilder ingredientsBuilder = new StringBuilder();
         StringBuilder directionsBuilder = new StringBuilder();
 
         for (String s : recipe.getIngredients()) {
-            ingredientsBuilder.append(s + "\n");
+            ingredientsBuilder.append(s).append("\n");
         }
         for (String s : recipe.getDirections()) {
-            directionsBuilder.append(s + "\n\n");
+            directionsBuilder.append(s).append("\n\n");
         }
         int length = directionsBuilder.length();
         directionsBuilder.delete(length - 2, length);
         ingredientsBuilder.deleteCharAt(ingredientsBuilder.length() - 1);
         ingredients.setText(ingredientsBuilder.toString());
         directions.setText(directionsBuilder.toString());
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.i("ReadRecipeActivity", "OnStart");
-
+        recipeDetailsLayout.animate().alpha(1.0f).setDuration(1000);
+        toolbar.animate().alpha(1.0f).setDuration(1000).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                toolbar.setTitle(recipe.getTitle().trim().toUpperCase());
+            }
+        });
     }
 
     @Override
@@ -233,9 +239,9 @@ public class ReadRecipeActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.i("ReadRecipeActivity", "OnRestart");
+    public void onEnterAnimationComplete() {
+        super.onEnterAnimationComplete();
+        displayRecipe(recipe);
     }
 
     @Override
@@ -246,19 +252,6 @@ public class ReadRecipeActivity extends AppCompatActivity {
             instructionListener.destroy();
         }
         recipeReader.destroy();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.i("ReadRecipeActivity", "onStop");
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.i("ReadRecipeActivity", "onPause");
     }
 
     private final AudioManager.OnAudioFocusChangeListener audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
@@ -278,7 +271,6 @@ public class ReadRecipeActivity extends AppCompatActivity {
                     recipeReader.stopReading();
                     break;
                 case AudioManager.AUDIOFOCUS_GAIN:
-                    //buildReaderAndListener();
                     break;
             }
         }
