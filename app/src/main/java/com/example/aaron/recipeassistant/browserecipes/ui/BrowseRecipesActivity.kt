@@ -3,36 +3,54 @@ package com.example.aaron.recipeassistant.browserecipes.ui
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.transition.Fade
 import com.example.aaron.recipeassistant.R
 import com.example.aaron.recipeassistant.browserecipes.RecipesRepositoryImpl
 import com.squareup.picasso.Picasso
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_browse_recipies.*
 
 class BrowseRecipesActivity : AppCompatActivity() {
 
-    private var recipeRecyclerViewAdapter: RecipeRecyclerViewAdapter? = null
+    private lateinit var recipeRecyclerViewAdapter: RecipeRecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        postponeEnterTransition()
         setContentView(R.layout.activity_browse_recipies)
+        initActivity()
+    }
 
-        val fade = Fade()
-        fade.duration = 600
-        window.reenterTransition = fade
+    override fun onStart() {
+        super.onStart()
+        startPostponedEnterTransition()
+    }
+
+    private fun initActivity() {
+        createTransitions()
+        initRecyclerView()
+        fetchRecipes()
+    }
+
+    private fun createTransitions() {
         postponeEnterTransition()
+        val fade = Fade()
+        fade.duration = 640
+        window.reenterTransition = fade
+    }
 
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerview_browse_recipes)
+    private fun initRecyclerView() {
         val columnCount = resources.getInteger(R.integer.recipe_browse_columns)
-        val layoutManager = GridLayoutManager(this, columnCount)
-        recyclerView.layoutManager = layoutManager
-        recyclerView.setHasFixedSize(true)
+        val lm = GridLayoutManager(this, columnCount)
         recipeRecyclerViewAdapter = RecipeRecyclerViewAdapter(this, columnCount)
-        recyclerView.adapter = recipeRecyclerViewAdapter
+        with(rv_recipe_browse) {
+            layoutManager = lm
+            setHasFixedSize(true)
+            adapter = recipeRecyclerViewAdapter
+        }
+    }
 
+    private fun fetchRecipes() {
         val repository = RecipesRepositoryImpl()
         repository.getRecipes()
                 .subscribeOn(Schedulers.io())
@@ -41,12 +59,7 @@ class BrowseRecipesActivity : AppCompatActivity() {
                     for (recipe in recipes) {
                         Picasso.with(this@BrowseRecipesActivity).load(recipe.imageUrl).fetch()
                     }
-                    recipeRecyclerViewAdapter!!.swapMealList(recipes)
+                    recipeRecyclerViewAdapter.swapMealList(recipes)
                 }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        startPostponedEnterTransition()
     }
 }
