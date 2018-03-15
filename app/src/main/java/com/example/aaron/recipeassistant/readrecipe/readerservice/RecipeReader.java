@@ -1,7 +1,6 @@
 package com.example.aaron.recipeassistant.readrecipe.readerservice;
 
 import android.content.Context;
-import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
 import android.util.Log;
@@ -49,7 +48,7 @@ public class RecipeReader {
 
     public void setRecipe(Recipe recipe) {
         this.recipe = recipe;
-        totalDirections = recipe.getDirections().length;
+        totalDirections = recipe.getDirections().size();
     }
 
     public void readIngredients() {
@@ -59,7 +58,7 @@ public class RecipeReader {
     }
 
     private void readDirection() {
-        speak(recipe.getDirections()[currentDirection], TextToSpeech.QUEUE_FLUSH);
+        speak(recipe.getDirections().get(currentDirection), TextToSpeech.QUEUE_FLUSH);
     }
 
     public void readFirstDirection() {
