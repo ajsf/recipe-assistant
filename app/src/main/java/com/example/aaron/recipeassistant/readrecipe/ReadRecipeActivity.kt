@@ -16,6 +16,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageButton
+import android.widget.ImageView
 import com.example.aaron.recipeassistant.App
 import com.example.aaron.recipeassistant.R
 import com.example.aaron.recipeassistant.model.Recipe
@@ -88,7 +89,7 @@ class ReadRecipeActivity : AppCompatActivity() {
         viewModel.recipe.value = recipe
     }
 
-    private fun setPlayButtonIcon(btn: ImageButton, isPlaying: Boolean) {
+    private fun setPlayButtonIcon(btn: ImageView, isPlaying: Boolean) {
         if (isPlaying) {
             btn.setImageResource(R.drawable.ic_stop_black_24dp)
         } else {
@@ -208,6 +209,6 @@ class ReadRecipeActivity : AppCompatActivity() {
     }
 
     companion object {
-        private val PERMISSIONS_REQUEST_RECORD_AUDIO = 1
+        private const val PERMISSIONS_REQUEST_RECORD_AUDIO = 1
     }
 }

@@ -4,5 +4,6 @@
     <dimen name="recipe_browse_title_padding_horizontal">8dp</dimen>
     <dimen name="read_recipe_card_corner_radius">2dp</dimen>
     <dimen name="collapsing_toolbar_height">240dp</dimen>
+    <dimen name="audio_player_btn_dimen">46dp</dimen>
     <integer name="recipe_browse_columns">2</integer>
 </resources>
