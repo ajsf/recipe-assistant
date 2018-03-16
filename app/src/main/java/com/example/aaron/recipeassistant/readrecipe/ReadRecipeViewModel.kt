@@ -16,6 +16,8 @@ class ReadRecipeViewModel(application: Application) : AndroidViewModel(applicati
 
     private var currentIngredient = ""
     private var currentDirection = ""
+    private var ingredientsLength = 0
+    private var directionsLength = 0
 
     val recipe = MutableLiveData<Recipe>()
 
@@ -49,6 +51,8 @@ class ReadRecipeViewModel(application: Application) : AndroidViewModel(applicati
             it?.let {
                 currentIngredientIndex.value = 0
                 currentDirectionIndex.value = 0
+                ingredientsLength = it.ingredients.lastIndex
+                directionsLength = it.directions.lastIndex
             }
         }
         readingIngredient.postValue(false)
@@ -67,7 +71,7 @@ class ReadRecipeViewModel(application: Application) : AndroidViewModel(applicati
 
     fun nextIngredient() {
         val index = currentIngredientIndex.value ?: -1
-        if (index < recipe.value?.ingredients?.lastIndex ?: -1) {
+        if (index < ingredientsLength) {
             currentIngredientIndex.value = index + 1
         }
     }
@@ -91,7 +95,7 @@ class ReadRecipeViewModel(application: Application) : AndroidViewModel(applicati
 
     fun nextDirection() {
         val index = currentDirectionIndex.value ?: -1
-        if (index < recipe.value?.ingredients?.lastIndex ?: -1) {
+        if (index <  directionsLength) {
             currentDirectionIndex.value = index + 1
         }
     }
