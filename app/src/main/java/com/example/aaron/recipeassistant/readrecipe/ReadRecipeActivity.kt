@@ -15,7 +15,6 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ImageButton
 import android.widget.ImageView
 import com.example.aaron.recipeassistant.App
 import com.example.aaron.recipeassistant.R
@@ -23,6 +22,8 @@ import com.example.aaron.recipeassistant.model.Recipe
 import com.example.aaron.recipeassistant.readrecipe.voicerecognitionservice.*
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_read_recipe.*
+import kotlinx.android.synthetic.main.read_recipe_toolbar.*
+import kotlinx.android.synthetic.main.recipe_card.view.*
 
 class ReadRecipeActivity : AppCompatActivity() {
 
@@ -78,10 +79,10 @@ class ReadRecipeActivity : AppCompatActivity() {
         val recipe = intent.extras.getParcelable("recipe") as Recipe
         viewModel = ViewModelProviders.of(this).get(ReadRecipeViewModel::class.java)
         viewModel.readingDirection.observe(this, Observer {
-            it?.let { setPlayButtonIcon(btn_play_direction, it) }
+            it?.let { setPlayButtonIcon(directions_card.btn_play, it) }
         })
         viewModel.readingIngredient.observe(this, Observer {
-            it?.let { setPlayButtonIcon(btn_play_ingredient, it) }
+            it?.let { setPlayButtonIcon(ingredients_card.btn_play, it) }
         })
         viewModel.recipe.observe(this, Observer {
             it?.let { displayRecipe(it) }
@@ -98,12 +99,12 @@ class ReadRecipeActivity : AppCompatActivity() {
     }
 
     private fun initButtons() {
-        btn_play_ingredient.setOnClickListener { viewModel.readIngredient() }
-        btn_next_ingredient.setOnClickListener { viewModel.nextIngredient() }
-        btn_prev_ingredient.setOnClickListener { viewModel.prevIngredient() }
-        btn_play_direction.setOnClickListener { viewModel.readDirection() }
-        btn_prev_direction.setOnClickListener { viewModel.prevDirection() }
-        btn_next_direction.setOnClickListener { viewModel.nextDirection() }
+        ingredients_card.btn_play.setOnClickListener { viewModel.readIngredient() }
+        ingredients_card.btn_next.setOnClickListener { viewModel.nextIngredient() }
+        ingredients_card.btn_prev.setOnClickListener { viewModel.prevIngredient() }
+        directions_card.btn_play.setOnClickListener { viewModel.readDirection() }
+        directions_card.btn_prev.setOnClickListener { viewModel.prevDirection() }
+        directions_card.btn_next.setOnClickListener { viewModel.nextDirection() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -127,8 +128,16 @@ class ReadRecipeActivity : AppCompatActivity() {
     private fun displayRecipe(recipe: Recipe) {
         displayRecipeImage(recipe)
         val (ingredients, directions) = formatRecipeForDisplay(recipe)
-        ingredients_text.text = ingredients
-        directions_text.text = directions
+        with(ingredients_card) {
+            tv_label.text = getString(R.string.ingredients_label)
+            tv_text.text = ingredients
+            tv_text.setTextAppearance(R.style.Base_TextAppearance_AppCompat_Body2)
+        }
+        with(directions_card) {
+            tv_label.text = getString(R.string.directions_label)
+            tv_text.text = directions
+        }
+
         collapsing_toolbar.title = recipe.title.trim { it <= ' ' }.toUpperCase()
         recipe_details_layout.animate().alpha(1.0f).duration = 1000
         toolbar.animate().alpha(1.0f).duration = 1000
