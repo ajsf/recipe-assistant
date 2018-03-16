@@ -12,19 +12,20 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.transition.Fade
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageButton
+import com.example.aaron.recipeassistant.App
 import com.example.aaron.recipeassistant.R
 import com.example.aaron.recipeassistant.model.Recipe
-import com.example.aaron.recipeassistant.readrecipe.voicerecognitionservice.InstructionListener
+import com.example.aaron.recipeassistant.readrecipe.voicerecognitionservice.*
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_read_recipe.*
 
 class ReadRecipeActivity : AppCompatActivity() {
 
     private var instructionListener: InstructionListener? = null
-    private var listening: Boolean = false
     private lateinit var audioManager: AudioManager
     private lateinit var listenerToggleBtn: MenuItem
     private lateinit var viewModel: ReadRecipeViewModel
@@ -35,12 +36,31 @@ class ReadRecipeActivity : AppCompatActivity() {
         initActivity()
     }
 
+    override fun onResume() {
+        super.onResume()
+        initInstructionListener()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.stopReading()
+        instructionListener?.detachActivity()
+    }
+
     private fun initActivity() {
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         setSupportActionBar(toolbar)
         initTransitions()
         initViewModel()
         initButtons()
+    }
+
+    private fun initInstructionListener() {
+        val app = application as App
+        instructionListener = app.instructionListener
+        if (instructionListener?.isListening() == true) {
+            instructionListener?.listen { instructionListenerCallback(it) }
+        }
     }
 
     private fun initTransitions() {
@@ -136,21 +156,54 @@ class ReadRecipeActivity : AppCompatActivity() {
     }
 
     private fun requestAudioPermission() {
-        val permissionCheck = ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.RECORD_AUDIO)
+        val permissionCheck = ContextCompat.checkSelfPermission(applicationContext,
+                Manifest.permission.RECORD_AUDIO)
+
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), PERMISSIONS_REQUEST_RECORD_AUDIO)
-            return
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.RECORD_AUDIO), PERMISSIONS_REQUEST_RECORD_AUDIO)
         }
     }
 
     private fun toggleListener() {
-        if (listening) {
+        if (instructionListener?.isListening() == true) {
             listenerToggleBtn.setIcon(R.drawable.ic_microphone_off_white_36dp)
-            instructionListener?.destroy()
-            listening = false
+            instructionListener?.stopListening()
         } else {
             listenerToggleBtn.setIcon(R.drawable.ic_microphone_outline_white_36dp)
             requestAudioPermission()
+            instructionListener?.listen { instructionListenerCallback(it) }
+        }
+    }
+
+    private fun instructionListenerCallback(instruction: Instruction) {
+        Log.d("ReadActivity", instruction.toString())
+        when (instruction) {
+            is PlayIngredient -> viewModel.readIngredient()
+            is PrevIngredient -> {
+                viewModel.prevIngredient()
+                viewModel.readIngredient()
+            }
+            is NextIngredient -> {
+                viewModel.nextIngredient()
+                viewModel.readIngredient()
+            }
+            is PlayDirection -> viewModel.readDirection()
+            is PrevDirection -> {
+                viewModel.prevDirection()
+                viewModel.readDirection()
+            }
+            is NextDirection -> {
+                viewModel.nextDirection()
+                viewModel.readDirection()
+            }
+            is FirstDirection -> {
+            }
+            is FinalDirection -> {
+            }
+            is Stop -> {
+                viewModel.stopReading()
+            }
         }
     }
 

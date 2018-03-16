@@ -102,4 +102,10 @@ class ReadRecipeViewModel(application: Application) : AndroidViewModel(applicati
             currentDirectionIndex.value = index - 1
         }
     }
+
+    fun stopReading() {
+        recipeReader.stopReading()
+        readingIngredient.value = false
+        readingDirection.value = false
+    }
 }
