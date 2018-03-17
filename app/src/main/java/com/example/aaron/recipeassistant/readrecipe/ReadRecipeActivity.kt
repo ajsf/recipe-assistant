@@ -19,6 +19,7 @@ import android.widget.ImageView
 import com.example.aaron.recipeassistant.App
 import com.example.aaron.recipeassistant.R
 import com.example.aaron.recipeassistant.model.Recipe
+import com.example.aaron.recipeassistant.readrecipe.readerservice.RecipeReader
 import com.example.aaron.recipeassistant.readrecipe.voicerecognitionservice.*
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_read_recipe.*
@@ -78,6 +79,7 @@ class ReadRecipeActivity : AppCompatActivity() {
     private fun initViewModel() {
         val recipe = intent.extras.getParcelable("recipe") as Recipe
         viewModel = ViewModelProviders.of(this).get(ReadRecipeViewModel::class.java)
+        viewModel.recipeReader = getRecipeReader()
         viewModel.readingDirection.observe(this, Observer {
             it?.let { setPlayButtonIcon(directions_card.btn_play, it) }
         })
@@ -88,6 +90,12 @@ class ReadRecipeActivity : AppCompatActivity() {
             it?.let { displayRecipe(it) }
         })
         viewModel.recipe.value = recipe
+    }
+
+    private fun getRecipeReader() : RecipeReader {
+        val recipeReader = RecipeReader(this)
+        lifecycle.addObserver(recipeReader)
+        return recipeReader
     }
 
     private fun setPlayButtonIcon(btn: ImageView, isPlaying: Boolean) {

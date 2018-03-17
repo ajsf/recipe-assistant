@@ -1,13 +1,12 @@
 package com.example.aaron.recipeassistant.readrecipe
 
-import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.ViewModel
 import android.speech.tts.UtteranceProgressListener
 import com.example.aaron.recipeassistant.model.Recipe
 import com.example.aaron.recipeassistant.readrecipe.readerservice.RecipeReader
 
-class ReadRecipeViewModel(application: Application) : AndroidViewModel(application) {
+class ReadRecipeViewModel : ViewModel() {
 
     val readingIngredient = MutableLiveData<Boolean>()
     val readingDirection = MutableLiveData<Boolean>()
@@ -21,6 +20,12 @@ class ReadRecipeViewModel(application: Application) : AndroidViewModel(applicati
 
     val recipe = MutableLiveData<Recipe>()
 
+    var recipeReader: RecipeReader? = null
+        set(value) {
+            field = value
+            field?.utteranceProgressListener = progressListener
+        }
+
     private val progressListener = object : UtteranceProgressListener() {
         override fun onDone(p0: String?) {
             if (readingDirection.value == true) readingDirection.postValue(false)
@@ -33,8 +38,6 @@ class ReadRecipeViewModel(application: Application) : AndroidViewModel(applicati
         override fun onStart(p0: String?) {
         }
     }
-
-    private val recipeReader = RecipeReader(application.applicationContext, progressListener)
 
     init {
         currentDirectionIndex.observeForever {
@@ -62,9 +65,9 @@ class ReadRecipeViewModel(application: Application) : AndroidViewModel(applicati
     fun readIngredient() {
         if (readingIngredient.value == false) {
             readingIngredient.value = true
-            recipeReader.read(currentIngredient)
+            recipeReader?.read(currentIngredient)
         } else {
-            recipeReader.stopReading()
+            recipeReader?.stopReading()
             readingIngredient.value = false
         }
     }
@@ -86,16 +89,16 @@ class ReadRecipeViewModel(application: Application) : AndroidViewModel(applicati
     fun readDirection() {
         if (readingDirection.value == false) {
             readingDirection.value = true
-            recipeReader.read(currentDirection)
+            recipeReader?.read(currentDirection)
         } else {
-            recipeReader.stopReading()
+            recipeReader?.stopReading()
             readingDirection.value = false
         }
     }
 
     fun nextDirection() {
         val index = currentDirectionIndex.value ?: -1
-        if (index <  directionsLength) {
+        if (index < directionsLength) {
             currentDirectionIndex.value = index + 1
         }
     }
@@ -108,7 +111,7 @@ class ReadRecipeViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun stopReading() {
-        recipeReader.stopReading()
+        recipeReader?.stopReading()
         readingIngredient.value = false
         readingDirection.value = false
     }

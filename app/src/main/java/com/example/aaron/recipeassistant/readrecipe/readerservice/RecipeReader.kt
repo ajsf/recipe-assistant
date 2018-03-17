@@ -10,26 +10,16 @@ import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import java.util.*
 
-class RecipeReader(private val context: Context, private val listener: UtteranceProgressListener) : LifecycleObserver {
+class RecipeReader(private val context: Context) : LifecycleObserver {
 
     private var tts: TextToSpeech? = null
-
-    init {
-        initTts()
-    }
+    lateinit var utteranceProgressListener: UtteranceProgressListener
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     private fun initTts() {
         tts = TextToSpeech(context, TextToSpeech.OnInitListener { status ->
             onTtsCreated(status)
         })
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    private fun activityResumed() {
-        if (tts == null) {
-            initTts()
-        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
@@ -39,6 +29,7 @@ class RecipeReader(private val context: Context, private val listener: Utterance
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun destroyTts() {
+        tts?.shutdown()
         tts = null
     }
 
@@ -48,7 +39,7 @@ class RecipeReader(private val context: Context, private val listener: Utterance
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "This language is not supported")
             }
-            tts?.setOnUtteranceProgressListener(listener)
+            tts?.setOnUtteranceProgressListener(utteranceProgressListener)
 
         } else {
             Log.e("TTS", "Initialization Failed!")
