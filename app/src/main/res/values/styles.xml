@@ -9,7 +9,9 @@
     </style>
 
     <style name="AudioPlayerButton">
-        <item name="android:padding">2dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:padding">12dp</item>
         <item name="android:stateListAnimator">@animator/player_btn_raise</item>
         <item name="android:layout_width">@dimen/audio_player_btn_dimen</item>
         <item name="android:layout_height">@dimen/audio_player_btn_dimen</item>
@@ -17,13 +19,12 @@
     </style>
 
     <style name="RecipeCardLabel">
-        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginTop">12dp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginEnd">12dp</item>
         <item name="android:textSize">22sp</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Headline</item>
-
     </style>
 
 </resources>
