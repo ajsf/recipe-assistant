@@ -53,7 +53,9 @@ dependencies {
 
     compile "net.opacapp:multiline-collapsingtoolbar:1.4.0"
 
-    testCompile "junit:junit:4.12"
+    testImplementation "junit:junit:4.12"
+    testImplementation "org.amshove.kluent:kluent:1.35"
+    testImplementation "android.arch.core:core-testing:1.1.0"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 repositories {

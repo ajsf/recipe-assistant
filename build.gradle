@@ -5,6 +5,7 @@ buildscript {
     ext.support_lib_version = '27.1.0'
     repositories {
         jcenter()
+        google()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'

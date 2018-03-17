@@ -10,8 +10,8 @@ class ReadRecipeViewModel : ViewModel() {
 
     val readingIngredient = MutableLiveData<Boolean>()
     val readingDirection = MutableLiveData<Boolean>()
-    private val currentIngredientIndex = MutableLiveData<Int>()
-    private val currentDirectionIndex = MutableLiveData<Int>()
+    val currentIngredientIndex = MutableLiveData<Int>()
+    val currentDirectionIndex = MutableLiveData<Int>()
 
     private var currentIngredient = ""
     private var currentDirection = ""
