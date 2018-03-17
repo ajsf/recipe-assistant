@@ -10,10 +10,20 @@ import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import java.util.*
 
-class RecipeReader(private val context: Context) : LifecycleObserver {
+interface RecipeReader {
+    fun setProgressListener(utteranceProgressListener: UtteranceProgressListener)
+    fun read(text: String)
+    fun stopReading()
+}
+
+class RecipeReaderImpl(private val context: Context) : RecipeReader, LifecycleObserver {
 
     private var tts: TextToSpeech? = null
-    lateinit var utteranceProgressListener: UtteranceProgressListener
+    private lateinit var utteranceProgressListener: UtteranceProgressListener
+
+    override fun setProgressListener(utteranceProgressListener: UtteranceProgressListener) {
+        this.utteranceProgressListener = utteranceProgressListener
+    }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     private fun initTts() {
@@ -46,13 +56,13 @@ class RecipeReader(private val context: Context) : LifecycleObserver {
         }
     }
 
-    fun read(text: String) {
+    override fun read(text: String) {
         val params = Bundle()
         params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "Speaking")
         tts?.speak(text, TextToSpeech.QUEUE_FLUSH, params, "Speaking")
     }
 
-    fun stopReading() {
+    override fun stopReading() {
         tts?.stop()
     }
 }

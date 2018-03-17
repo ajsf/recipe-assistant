@@ -20,6 +20,7 @@ import com.example.aaron.recipeassistant.App
 import com.example.aaron.recipeassistant.R
 import com.example.aaron.recipeassistant.model.Recipe
 import com.example.aaron.recipeassistant.readrecipe.readerservice.RecipeReader
+import com.example.aaron.recipeassistant.readrecipe.readerservice.RecipeReaderImpl
 import com.example.aaron.recipeassistant.readrecipe.voicerecognitionservice.*
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_read_recipe.*
@@ -93,7 +94,7 @@ class ReadRecipeActivity : AppCompatActivity() {
     }
 
     private fun getRecipeReader() : RecipeReader {
-        val recipeReader = RecipeReader(this)
+        val recipeReader = RecipeReaderImpl(this)
         lifecycle.addObserver(recipeReader)
         return recipeReader
     }

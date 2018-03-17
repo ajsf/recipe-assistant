@@ -23,7 +23,7 @@ class ReadRecipeViewModel : ViewModel() {
     var recipeReader: RecipeReader? = null
         set(value) {
             field = value
-            field?.utteranceProgressListener = progressListener
+            field?.setProgressListener(progressListener)
         }
 
     private val progressListener = object : UtteranceProgressListener() {

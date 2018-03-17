@@ -2,7 +2,8 @@ package com.example.aaron.recipeassistant.readrecipe
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.aaron.recipeassistant.model.Recipe
-import org.amshove.kluent.`should equal`
+import com.example.aaron.recipeassistant.readrecipe.readerservice.RecipeReader
+import org.amshove.kluent.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -14,10 +15,83 @@ class ReadRecipeViewModelTest {
     val rule = InstantTaskExecutorRule()
 
     private lateinit var vm: ReadRecipeViewModel
+    private lateinit var mockReader: RecipeReader
 
     @Before
     fun setup() {
         vm = ReadRecipeViewModel()
+        mockReader = mock(RecipeReader::class)
+        vm.recipeReader = mockReader
+    }
+
+    @Test
+    fun `when first created the first ingredient is selected and read when called`() {
+        //given
+        vm.recipe.value = testRecipe
+        //when
+        vm.readIngredient()
+        //then
+        Verify on mockReader that mockReader.read(testRecipe.ingredients.first())
+    }
+
+    @Test
+    fun `when first created the first direction is selected and read when called`() {
+        //given
+        vm.recipe.value = testRecipe
+        //when
+        vm.readDirection()
+        //then
+        Verify on mockReader that mockReader.read(testRecipe.directions.first())
+    }
+
+    @Test
+    fun `next ingredient button works`() {
+        //given
+        vm.recipe.value = testRecipe
+        //when
+        vm.nextIngredient()
+        vm.nextIngredient()
+        vm.readIngredient()
+        //then
+        Verify on mockReader that mockReader.read(testRecipe.ingredients[2])
+    }
+
+    @Test
+    fun `previous ingredient button works`() {
+        //given
+        vm.recipe.value = testRecipe
+        //when
+        vm.nextIngredient()
+        vm.nextIngredient()
+        vm.prevIngredient()
+        vm.readIngredient()
+        //then
+        Verify on mockReader that mockReader.read(testRecipe.ingredients[1])
+    }
+
+    @Test
+    fun `next direction button works`() {
+        //given
+        vm.recipe.value = testRecipe
+        //when
+        vm.nextDirection()
+        vm.nextDirection()
+        vm.readDirection()
+        //then
+        Verify on mockReader that mockReader.read(testRecipe.directions[2])
+    }
+
+    @Test
+    fun `previous direction button works`() {
+        //given
+        vm.recipe.value = testRecipe
+        //when
+        vm.nextDirection()
+        vm.nextDirection()
+        vm.prevDirection()
+        vm.readDirection()
+        //then
+        Verify on mockReader that mockReader.read(testRecipe.directions[1])
     }
 
     @Test
