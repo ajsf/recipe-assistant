@@ -11,7 +11,7 @@ private fun RecipeDTO.toRecipe(): Recipe {
             }
             .map { "${it.first} ${it.second}" }
 
-    val directions = strInstructions?.split("\\n".toRegex())?.filter { it.isEmpty().not() } ?: listOf()
+    val directions = strInstructions?.split("\\n".toRegex())?.filter { it.isNotBlank() } ?: listOf()
     println(directions)
 
     return Recipe(strMeal ?: "", ingredients, directions, strMealThumb ?: "")

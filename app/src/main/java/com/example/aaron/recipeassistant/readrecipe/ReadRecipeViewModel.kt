@@ -86,6 +86,18 @@ class ReadRecipeViewModel : ViewModel() {
         }
     }
 
+    fun setCurrentIngredient(index: Int) {
+        if (index in 0..ingredientsLength) {
+            currentIngredientIndex.value = index
+        }
+    }
+
+    fun setCurrentDirection(index: Int) {
+        if (index in 0..directionsLength) {
+            currentDirectionIndex.value = index
+        }
+    }
+
     fun readDirection() {
         if (readingDirection.value == false) {
             readingDirection.value = true

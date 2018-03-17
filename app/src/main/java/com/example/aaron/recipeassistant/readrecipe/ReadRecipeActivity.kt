@@ -21,6 +21,9 @@ import com.example.aaron.recipeassistant.R
 import com.example.aaron.recipeassistant.model.Recipe
 import com.example.aaron.recipeassistant.readrecipe.readerservice.RecipeReader
 import com.example.aaron.recipeassistant.readrecipe.readerservice.RecipeReaderImpl
+import com.example.aaron.recipeassistant.readrecipe.view.DirectionCardItemText
+import com.example.aaron.recipeassistant.readrecipe.view.IngredientCardItemText
+import com.example.aaron.recipeassistant.readrecipe.view.RecipeCardItemText
 import com.example.aaron.recipeassistant.readrecipe.voicerecognitionservice.*
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_read_recipe.*
@@ -33,6 +36,11 @@ class ReadRecipeActivity : AppCompatActivity() {
     private lateinit var audioManager: AudioManager
     private lateinit var listenerToggleBtn: MenuItem
     private lateinit var viewModel: ReadRecipeViewModel
+
+    private var ingredientsTvList = listOf<RecipeCardItemText>()
+    private var directionsTvList = listOf<RecipeCardItemText>()
+    private var currentIngredientIndex = 0
+    private var currentDirectionIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,7 +88,7 @@ class ReadRecipeActivity : AppCompatActivity() {
     private fun initViewModel() {
         val recipe = intent.extras.getParcelable("recipe") as Recipe
         viewModel = ViewModelProviders.of(this).get(ReadRecipeViewModel::class.java)
-        viewModel.recipeReader = getRecipeReader()
+        viewModel.recipeReader = createRecipeReader()
         viewModel.readingDirection.observe(this, Observer {
             it?.let { setPlayButtonIcon(directions_card.btn_play, it) }
         })
@@ -88,12 +96,29 @@ class ReadRecipeActivity : AppCompatActivity() {
             it?.let { setPlayButtonIcon(ingredients_card.btn_play, it) }
         })
         viewModel.recipe.observe(this, Observer {
-            it?.let { displayRecipe(it) }
+            it?.let {
+                displayRecipe(it)
+            }
+        })
+        viewModel.currentIngredientIndex.observe(this, Observer {
+            it?.let {
+                ingredientsTvList[currentIngredientIndex].selected.value = false
+                ingredientsTvList[it].selected.value = true
+                currentIngredientIndex = it
+            }
+
+        })
+        viewModel.currentDirectionIndex.observe(this, Observer {
+            it?.let {
+                directionsTvList[currentDirectionIndex].selected.value = false
+                directionsTvList[it].selected.value = true
+                currentDirectionIndex = it
+            }
         })
         viewModel.recipe.value = recipe
     }
 
-    private fun getRecipeReader() : RecipeReader {
+    private fun createRecipeReader(): RecipeReader {
         val recipeReader = RecipeReaderImpl(this)
         lifecycle.addObserver(recipeReader)
         return recipeReader
@@ -136,15 +161,19 @@ class ReadRecipeActivity : AppCompatActivity() {
 
     private fun displayRecipe(recipe: Recipe) {
         displayRecipeImage(recipe)
-        val (ingredients, directions) = formatRecipeForDisplay(recipe)
+        ingredientsTvList = buildIngredientsTextViews(recipe.ingredients)
+        directionsTvList = buildDirectionTextViews(recipe.directions)
         with(ingredients_card) {
             tv_label.text = getString(R.string.ingredients_label)
-            tv_text.text = ingredients
-            tv_text.setTextAppearance(R.style.Base_TextAppearance_AppCompat_Body2)
+            ingredientsTvList.forEach {
+                details_layout.addView(it)
+            }
         }
         with(directions_card) {
             tv_label.text = getString(R.string.directions_label)
-            tv_text.text = directions
+            directionsTvList.forEach {
+                details_layout.addView(it)
+            }
         }
 
         collapsing_toolbar.title = recipe.title.trim { it <= ' ' }.toUpperCase()
@@ -163,15 +192,32 @@ class ReadRecipeActivity : AppCompatActivity() {
                 .into(recipe_header_image)
     }
 
-    private fun formatRecipeForDisplay(recipe: Recipe): Pair<String, String> {
-        val ingredientsBuilder = StringBuilder()
-        val directionsBuilder = StringBuilder()
-        recipe.ingredients.forEach { ingredientsBuilder.append(it).append("\n") }
-        recipe.directions.forEach { directionsBuilder.append(it).append("\n\n") }
-        val length = directionsBuilder.length
-        directionsBuilder.delete(length - 2, length)
-        ingredientsBuilder.deleteCharAt(ingredientsBuilder.length - 1)
-        return ingredientsBuilder.toString() to directionsBuilder.toString()
+    private fun buildIngredientsTextViews(ingredients: List<String>): List<RecipeCardItemText> {
+        return ingredients
+                .map {
+                    val tv = IngredientCardItemText(this, it)
+                    tv.selected.value = false
+                    tv
+                }
+                .mapIndexed { index, tv ->
+                    tv.setOnClickListener { viewModel.setCurrentIngredient(index) }
+                    tv
+                }
+    }
+
+    private fun buildDirectionTextViews(directions: List<String>): List<RecipeCardItemText> {
+        return directions
+                .map {
+                    val tv = DirectionCardItemText(this, it)
+                    tv.selected.value = false
+                    tv
+                }
+                .mapIndexed { index, tv ->
+                    tv.setOnClickListener {
+                        viewModel.setCurrentDirection(index)
+                    }
+                    tv
+                }
     }
 
     private fun requestAudioPermission() {

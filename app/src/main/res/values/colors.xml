@@ -6,5 +6,7 @@
     <color name="photoTint">#6a000000</color>
     <color name="photoTintPressed">#20ff4081</color>
     <color name="colorLight">#C5CAE9</color>
+    <color name="selectedItem">#68c5cae9</color>
     <color name="colorLightest">#E8EAF6</color>
+    <color name="transparent">#80000000</color>
 </resources>
