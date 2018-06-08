@@ -37,7 +37,6 @@ class IngredientCardItemText(activity: AppCompatActivity, text: String) : Recipe
     init {
         setLineSpacing(1.2f, 1f)
     }
-
 }
 
 class DirectionCardItemText(activity: AppCompatActivity, text: String) : RecipeCardItemText(activity, text) {
@@ -45,6 +44,5 @@ class DirectionCardItemText(activity: AppCompatActivity, text: String) : RecipeC
     override val unselectedPadding = 12
     init {
         setLineSpacing(2f, 1f)
-
     }
 }
