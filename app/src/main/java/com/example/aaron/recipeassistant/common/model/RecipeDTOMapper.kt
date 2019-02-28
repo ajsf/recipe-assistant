@@ -1,4 +1,4 @@
-package com.example.aaron.recipeassistant.model
+package com.example.aaron.recipeassistant.common.model
 
 fun RecipeListDTO.toRecipeList(): List<Recipe> = meals?.map {
     it.toRecipe()

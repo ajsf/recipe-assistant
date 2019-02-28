@@ -1,4 +1,4 @@
-package com.example.aaron.recipeassistant.model
+package com.example.aaron.recipeassistant.common.model
 
 import android.os.Parcel
 import android.os.Parcelable

@@ -1,4 +1,4 @@
-package com.example.aaron.recipeassistant.browserecipes.ui
+package com.example.aaron.recipeassistant.browserecipes.view
 
 import android.app.Activity
 import android.content.Context
@@ -15,8 +15,8 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 
 import com.example.aaron.recipeassistant.R
-import com.example.aaron.recipeassistant.model.Recipe
-import com.example.aaron.recipeassistant.readrecipe.ReadRecipeActivity
+import com.example.aaron.recipeassistant.common.model.Recipe
+import com.example.aaron.recipeassistant.readrecipe.view.ReadRecipeActivity
 import com.squareup.picasso.Picasso
 
 class RecipeRecyclerViewAdapter internal constructor(activity: Activity, columnCount: Int) : RecyclerView.Adapter<RecipeRecyclerViewAdapter.RecipeViewHolder>() {

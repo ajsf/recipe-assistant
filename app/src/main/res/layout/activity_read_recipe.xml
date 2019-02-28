@@ -30,7 +30,7 @@
                 android:layout_margin="4dp"
                 android:paddingBottom="4dp"
                 android:orientation="vertical"
-                tools:context="com.example.aaron.recipeassistant.readrecipe.ReadRecipeActivity">
+                tools:context="com.example.aaron.recipeassistant.readrecipe.view.ReadRecipeActivity">
 
                 <include
                     android:id="@+id/ingredients_card"

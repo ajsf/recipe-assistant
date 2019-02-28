@@ -1,8 +1,8 @@
-package com.example.aaron.recipeassistant.browserecipes
+package com.example.aaron.recipeassistant.common
 
-import com.example.aaron.recipeassistant.browserecipes.networking.RecipeService
-import com.example.aaron.recipeassistant.model.Recipe
-import com.example.aaron.recipeassistant.model.toRecipeList
+import com.example.aaron.recipeassistant.common.networking.RecipeService
+import com.example.aaron.recipeassistant.common.model.Recipe
+import com.example.aaron.recipeassistant.common.model.toRecipeList
 import io.reactivex.Single
 
 interface RecipesRepository {

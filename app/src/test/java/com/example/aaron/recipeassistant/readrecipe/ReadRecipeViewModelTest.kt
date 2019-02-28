@@ -1,8 +1,9 @@
 package com.example.aaron.recipeassistant.readrecipe
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
-import com.example.aaron.recipeassistant.model.Recipe
-import com.example.aaron.recipeassistant.readrecipe.readerservice.RecipeReader
+import com.example.aaron.recipeassistant.common.model.Recipe
+import com.example.aaron.recipeassistant.common.readerservice.RecipeReader
+import com.example.aaron.recipeassistant.readrecipe.viewmodel.ReadRecipeViewModel
 import org.amshove.kluent.*
 import org.junit.Before
 import org.junit.Rule

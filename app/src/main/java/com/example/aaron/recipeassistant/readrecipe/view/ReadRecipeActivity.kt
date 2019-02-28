@@ -1,4 +1,4 @@
-package com.example.aaron.recipeassistant.readrecipe
+package com.example.aaron.recipeassistant.readrecipe.view
 
 import android.Manifest
 import android.arch.lifecycle.Observer
@@ -18,13 +18,11 @@ import android.view.MenuItem
 import android.widget.ImageView
 import com.example.aaron.recipeassistant.App
 import com.example.aaron.recipeassistant.R
-import com.example.aaron.recipeassistant.model.Recipe
-import com.example.aaron.recipeassistant.readrecipe.readerservice.RecipeReader
-import com.example.aaron.recipeassistant.readrecipe.readerservice.RecipeReaderImpl
-import com.example.aaron.recipeassistant.readrecipe.view.DirectionCardItemText
-import com.example.aaron.recipeassistant.readrecipe.view.IngredientCardItemText
-import com.example.aaron.recipeassistant.readrecipe.view.RecipeCardItemText
-import com.example.aaron.recipeassistant.readrecipe.voicerecognitionservice.*
+import com.example.aaron.recipeassistant.common.model.Recipe
+import com.example.aaron.recipeassistant.common.readerservice.RecipeReader
+import com.example.aaron.recipeassistant.common.readerservice.RecipeReaderImpl
+import com.example.aaron.recipeassistant.readrecipe.viewmodel.ReadRecipeViewModel
+import com.example.aaron.recipeassistant.common.voicerecognitionservice.*
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_read_recipe.*
 import kotlinx.android.synthetic.main.read_recipe_toolbar.*
@@ -226,7 +224,9 @@ class ReadRecipeActivity : AppCompatActivity() {
 
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.RECORD_AUDIO), PERMISSIONS_REQUEST_RECORD_AUDIO)
+                    arrayOf(Manifest.permission.RECORD_AUDIO),
+                PERMISSIONS_REQUEST_RECORD_AUDIO
+            )
         }
     }
 

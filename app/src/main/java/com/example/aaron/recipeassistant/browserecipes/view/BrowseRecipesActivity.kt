@@ -1,11 +1,11 @@
-package com.example.aaron.recipeassistant.browserecipes.ui
+package com.example.aaron.recipeassistant.browserecipes.view
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.transition.Fade
 import com.example.aaron.recipeassistant.R
-import com.example.aaron.recipeassistant.browserecipes.RecipesRepositoryImpl
+import com.example.aaron.recipeassistant.common.RecipesRepositoryImpl
 import com.squareup.picasso.Picasso
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -42,7 +42,11 @@ class BrowseRecipesActivity : AppCompatActivity() {
     private fun initRecyclerView() {
         val columnCount = resources.getInteger(R.integer.recipe_browse_columns)
         val lm = GridLayoutManager(this, columnCount)
-        recipeRecyclerViewAdapter = RecipeRecyclerViewAdapter(this, columnCount)
+        recipeRecyclerViewAdapter =
+            RecipeRecyclerViewAdapter(
+                this,
+                columnCount
+            )
         with(rv_recipe_browse) {
             layoutManager = lm
             setHasFixedSize(true)

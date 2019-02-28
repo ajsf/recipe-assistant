@@ -1,4 +1,4 @@
-package com.example.aaron.recipeassistant.model
+package com.example.aaron.recipeassistant.common.model
 
 data class RecipeDTO(
     val idMeal: String? = null,

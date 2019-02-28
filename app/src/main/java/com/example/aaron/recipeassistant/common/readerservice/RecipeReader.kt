@@ -1,4 +1,4 @@
-package com.example.aaron.recipeassistant.readrecipe.readerservice
+package com.example.aaron.recipeassistant.common.readerservice
 
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver

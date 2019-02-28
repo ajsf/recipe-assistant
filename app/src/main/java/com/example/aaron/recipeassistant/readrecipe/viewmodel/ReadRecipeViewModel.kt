@@ -1,10 +1,10 @@
-package com.example.aaron.recipeassistant.readrecipe
+package com.example.aaron.recipeassistant.readrecipe.viewmodel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.speech.tts.UtteranceProgressListener
-import com.example.aaron.recipeassistant.model.Recipe
-import com.example.aaron.recipeassistant.readrecipe.readerservice.RecipeReader
+import com.example.aaron.recipeassistant.common.model.Recipe
+import com.example.aaron.recipeassistant.common.readerservice.RecipeReader
 
 class ReadRecipeViewModel : ViewModel() {
 

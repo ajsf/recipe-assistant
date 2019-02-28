@@ -1,9 +1,8 @@
-package com.example.aaron.recipeassistant.browserecipes.networking
+package com.example.aaron.recipeassistant.common.networking
 
-import com.example.aaron.recipeassistant.model.RecipeListDTO
+import com.example.aaron.recipeassistant.common.model.RecipeListDTO
 import io.reactivex.Single
 
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory

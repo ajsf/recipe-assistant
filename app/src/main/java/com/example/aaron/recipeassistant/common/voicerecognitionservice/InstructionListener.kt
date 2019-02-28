@@ -1,4 +1,4 @@
-package com.example.aaron.recipeassistant.readrecipe.voicerecognitionservice
+package com.example.aaron.recipeassistant.common.voicerecognitionservice
 
 import android.app.Application
 import android.util.Log
