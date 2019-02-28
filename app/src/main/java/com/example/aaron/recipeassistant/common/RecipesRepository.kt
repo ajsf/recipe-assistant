@@ -1,8 +1,8 @@
 package com.example.aaron.recipeassistant.common
 
-import com.example.aaron.recipeassistant.common.networking.RecipeService
 import com.example.aaron.recipeassistant.common.model.Recipe
 import com.example.aaron.recipeassistant.common.model.toRecipeList
+import com.example.aaron.recipeassistant.common.networking.RecipeService
 import io.reactivex.Single
 
 interface RecipesRepository {
@@ -13,5 +13,8 @@ class RecipesRepositoryImpl : RecipesRepository {
 
     private val retrofit = RecipeService.retrofit?.create(RecipeService::class.java)
 
-    override fun getRecipes() = retrofit?.randomSelection()?.map { it.toRecipeList() } ?: Single.error(Throwable("Error"))
+    override fun getRecipes(): Single<List<Recipe>> {
+        return retrofit?.randomSelection()?.map { it.toRecipeList() }
+            ?: Single.error(Throwable("Error"))
+    }
 }

@@ -1,19 +1,23 @@
 package com.example.aaron.recipeassistant.browserecipes.view
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.transition.Fade
 import com.example.aaron.recipeassistant.R
-import com.example.aaron.recipeassistant.common.RecipesRepositoryImpl
+import com.example.aaron.recipeassistant.browserecipes.viewmodel.BrowseRecipesViewModel
+import com.example.aaron.recipeassistant.browserecipes.viewmodel.BrowseRecipesViewState
+import com.example.aaron.recipeassistant.browserecipes.viewmodel.ViewModelFactory
 import com.squareup.picasso.Picasso
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_browse_recipies.*
 
 class BrowseRecipesActivity : AppCompatActivity() {
 
     private lateinit var recipeRecyclerViewAdapter: RecipeRecyclerViewAdapter
+
+    private lateinit var viewModel: BrowseRecipesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,15 +25,17 @@ class BrowseRecipesActivity : AppCompatActivity() {
         initActivity()
     }
 
-    override fun onStart() {
-        super.onStart()
-        startPostponedEnterTransition()
-    }
-
     private fun initActivity() {
+        initViewModel()
         createTransitions()
         initRecyclerView()
-        fetchRecipes()
+        observeViewModel()
+    }
+
+    private fun initViewModel() {
+        val factory = ViewModelFactory()
+        viewModel = ViewModelProviders.of(this, factory).get(BrowseRecipesViewModel::class.java)
+        viewModel.getRecipes()
     }
 
     private fun createTransitions() {
@@ -54,16 +60,18 @@ class BrowseRecipesActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchRecipes() {
-        val repository = RecipesRepositoryImpl()
-        repository.getRecipes()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { recipes ->
-                    for (recipe in recipes) {
-                        Picasso.with(this@BrowseRecipesActivity).load(recipe.imageUrl).fetch()
-                    }
-                    recipeRecyclerViewAdapter.swapMealList(recipes)
-                }
+    private fun observeViewModel() {
+        viewModel.viewStateLiveData.observe(this,
+            Observer { it?.let { viewState -> render(viewState) } })
+        startPostponedEnterTransition()
+    }
+
+    private fun render(viewState: BrowseRecipesViewState) = with(viewState) {
+        recipes.onEach { recipe ->
+            Picasso.with(this@BrowseRecipesActivity)
+                .load(recipe.imageUrl)
+                .fetch()
+        }
+        recipeRecyclerViewAdapter.swapMealList(recipes)
     }
 }
