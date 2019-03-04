@@ -46,7 +46,7 @@ class RecipeRecyclerViewAdapter(private val activity: Activity, columnCount: Int
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val recipe = recipeList[position]
-        val mealName = recipe.title.trim().toUpperCase().replace(" ", "\n")
+        val mealName = recipe.title.toUpperCase().replace(" ", "\n")
         holder.recipe = recipe
         holder.recipeName.text = mealName
         picasso.load(recipe.imageUrl)
