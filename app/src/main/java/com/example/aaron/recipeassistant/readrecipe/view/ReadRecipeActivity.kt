@@ -1,142 +1,32 @@
 package com.example.aaron.recipeassistant.readrecipe.view
 
-import android.Manifest
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
-import android.content.pm.PackageManager
-import android.media.AudioManager
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.transition.Fade
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ImageView
-import com.example.aaron.recipeassistant.App
 import com.example.aaron.recipeassistant.R
-import com.example.aaron.recipeassistant.common.model.Recipe
-import com.example.aaron.recipeassistant.common.readerservice.RecipeReader
-import com.example.aaron.recipeassistant.common.readerservice.RecipeReaderImpl
+import com.example.aaron.recipeassistant.common.model.*
 import com.example.aaron.recipeassistant.readrecipe.viewmodel.ReadRecipeViewModel
-import com.example.aaron.recipeassistant.common.voicerecognitionservice.*
+import com.example.aaron.recipeassistant.readrecipe.viewmodel.ReadRecipeViewModelFactory
+import com.example.aaron.recipeassistant.readrecipe.viewmodel.ReadRecipeViewState
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_read_recipe.*
 import kotlinx.android.synthetic.main.read_recipe_toolbar.*
-import kotlinx.android.synthetic.main.recipe_card.view.*
 
 class ReadRecipeActivity : AppCompatActivity() {
 
-    private var instructionListener: InstructionListener? = null
-    private lateinit var audioManager: AudioManager
-    private lateinit var listenerToggleBtn: MenuItem
-    private lateinit var viewModel: ReadRecipeViewModel
+    private var listenerToggleBtn: MenuItem? = null
 
-    private var ingredientsTvList = listOf<RecipeCardItemText>()
-    private var directionsTvList = listOf<RecipeCardItemText>()
-    private var currentIngredientIndex = 0
-    private var currentDirectionIndex = 0
+    private lateinit var viewModel: ReadRecipeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_read_recipe)
         initActivity()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        initInstructionListener()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        viewModel.stopReading()
-        instructionListener?.detachActivity()
-    }
-
-    private fun initActivity() {
-        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        setSupportActionBar(toolbar)
-        initTransitions()
-        initViewModel()
-        initButtons()
-    }
-
-    private fun initInstructionListener() {
-        val app = application as App
-        instructionListener = app.instructionListener
-        if (instructionListener?.isListening() == true) {
-            instructionListener?.listen { instructionListenerCallback(it) }
-        }
-    }
-
-    private fun initTransitions() {
-        val fade = Fade()
-        fade.duration = 600
-        window.returnTransition = fade
-        window.allowReturnTransitionOverlap = true
-        recipe_details_layout.alpha = 0.0f
-        toolbar.alpha = 0f
-        toolbar.title = ""
-    }
-
-    private fun initViewModel() {
-        val recipe = intent.extras.getParcelable("recipe") as Recipe
-        viewModel = ViewModelProviders.of(this).get(ReadRecipeViewModel::class.java)
-        viewModel.recipeReader = createRecipeReader()
-        viewModel.readingDirection.observe(this, Observer {
-            it?.let { setPlayButtonIcon(directions_card.btn_play, it) }
-        })
-        viewModel.readingIngredient.observe(this, Observer {
-            it?.let { setPlayButtonIcon(ingredients_card.btn_play, it) }
-        })
-        viewModel.recipe.observe(this, Observer {
-            it?.let {
-                displayRecipe(it)
-            }
-        })
-        viewModel.currentIngredientIndex.observe(this, Observer {
-            it?.let {
-                ingredientsTvList[currentIngredientIndex].selected.value = false
-                ingredientsTvList[it].selected.value = true
-                currentIngredientIndex = it
-            }
-
-        })
-        viewModel.currentDirectionIndex.observe(this, Observer {
-            it?.let {
-                directionsTvList[currentDirectionIndex].selected.value = false
-                directionsTvList[it].selected.value = true
-                currentDirectionIndex = it
-            }
-        })
-        viewModel.recipe.value = recipe
-    }
-
-    private fun createRecipeReader(): RecipeReader {
-        val recipeReader = RecipeReaderImpl(this)
-        lifecycle.addObserver(recipeReader)
-        return recipeReader
-    }
-
-    private fun setPlayButtonIcon(btn: ImageView, isPlaying: Boolean) {
-        if (isPlaying) {
-            btn.setImageResource(R.drawable.ic_stop_black_24dp)
-        } else {
-            btn.setImageResource(R.drawable.ic_play_arrow_black_24dp)
-        }
-    }
-
-    private fun initButtons() {
-        ingredients_card.btn_play.setOnClickListener { viewModel.readIngredient() }
-        ingredients_card.btn_next.setOnClickListener { viewModel.nextIngredient() }
-        ingredients_card.btn_prev.setOnClickListener { viewModel.prevIngredient() }
-        directions_card.btn_play.setOnClickListener { viewModel.readDirection() }
-        directions_card.btn_prev.setOnClickListener { viewModel.prevDirection() }
-        directions_card.btn_next.setOnClickListener { viewModel.nextDirection() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -151,28 +41,90 @@ class ReadRecipeActivity : AppCompatActivity() {
             return true
         }
         if (item.itemId == R.id.action_listen) {
-            toggleListener()
+            viewModel.viewAction(ToggleListener)
             return true
         }
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.viewAction(StopReading)
+    }
+
+    private fun initActivity() {
+        setSupportActionBar(toolbar)
+        initTransitions()
+        initViewModel()
+        initButtons()
+    }
+
+    private fun initTransitions() {
+        window.returnTransition = Fade().apply { duration = 600 }
+        window.allowReturnTransitionOverlap = true
+        recipe_details_layout.alpha = 0.0f
+        toolbar.alpha = 0f
+        toolbar.title = ""
+    }
+
+    private fun initViewModel() {
+        val factory = ReadRecipeViewModelFactory(this)
+
+        viewModel = ViewModelProviders.of(this, factory)
+            .get(ReadRecipeViewModel::class.java)
+
+        viewModel.viewStateLiveData.observe(this, Observer {
+            it?.let { viewState -> render(viewState) }
+        })
+
+        val recipe = intent.extras.getParcelable("recipe") as Recipe
+        viewModel.setRecipe(recipe)
+        displayRecipe(recipe)
+    }
+
+    private fun render(viewState: ReadRecipeViewState): Unit = with(viewState) {
+        ingredients_card.setPlaying(readingIngredient)
+        directions_card.setPlaying(readingDirection)
+
+        ingredients_card.setSelectedItem(ingredientIndex)
+        directions_card.setSelectedItem(directionIndex)
+
+        if (isListening) {
+            listenerToggleBtn?.setIcon(R.drawable.ic_microphone_outline_white_36dp)
+        } else {
+            listenerToggleBtn?.setIcon(R.drawable.ic_microphone_off_white_36dp)
+        }
+    }
+
+    private fun initButtons() {
+        fun readIngredient() = viewModel.viewAction(PlayIngredient)
+        fun nextIngredient() = viewModel.viewAction(NextIngredient)
+        fun prevIngredient() = viewModel.viewAction(PrevIngredient)
+        fun readDirection() = viewModel.viewAction(PlayDirection)
+        fun nextDirection() = viewModel.viewAction(NextDirection)
+        fun prevDirection() = viewModel.viewAction(PrevDirection)
+
+        ingredients_card.initButtons(::readIngredient, ::nextIngredient, ::prevIngredient)
+        directions_card.initButtons(::readDirection, ::nextDirection, ::prevDirection)
+    }
+
     private fun displayRecipe(recipe: Recipe) {
         displayRecipeImage(recipe)
-        ingredientsTvList = buildIngredientsTextViews(recipe.ingredients)
-        directionsTvList = buildDirectionTextViews(recipe.directions)
-        with(ingredients_card) {
-            tv_label.text = getString(R.string.ingredients_label)
-            ingredientsTvList.forEach {
-                details_layout.addView(it)
-            }
-        }
-        with(directions_card) {
-            tv_label.text = getString(R.string.directions_label)
-            directionsTvList.forEach {
-                details_layout.addView(it)
-            }
-        }
+
+        val ingredientsLabel = resources.getString(R.string.ingredients_label)
+        val directionsLabel = resources.getString(R.string.directions_label)
+
+        ingredients_card.displayItems(
+            recipe.ingredients,
+            ingredientsLabel
+        )
+        { viewModel.viewAction(SetIngredient(it)) }
+
+        directions_card.displayItems(
+            recipe.directions,
+            directionsLabel
+        )
+        { viewModel.viewAction(SetDirection(it)) }
 
         collapsing_toolbar.title = recipe.title.trim { it <= ' ' }.toUpperCase()
         recipe_details_layout.animate().alpha(1.0f).duration = 1000
@@ -185,94 +137,8 @@ class ReadRecipeActivity : AppCompatActivity() {
         val width = metrics.widthPixels
         val height = resources.getDimension(R.dimen.collapsing_toolbar_height).toInt()
         Picasso.with(this)
-                .load(recipe.imageUrl)
-                .resize(width, height)
-                .into(recipe_header_image)
-    }
-
-    private fun buildIngredientsTextViews(ingredients: List<String>): List<RecipeCardItemText> {
-        return ingredients
-                .map {
-                    val tv = IngredientCardItemText(this, it)
-                    tv.selected.value = false
-                    tv
-                }
-                .mapIndexed { index, tv ->
-                    tv.setOnClickListener { viewModel.setCurrentIngredient(index) }
-                    tv
-                }
-    }
-
-    private fun buildDirectionTextViews(directions: List<String>): List<RecipeCardItemText> {
-        return directions
-                .map {
-                    val tv = DirectionCardItemText(this, it)
-                    tv.selected.value = false
-                    tv
-                }
-                .mapIndexed { index, tv ->
-                    tv.setOnClickListener {
-                        viewModel.setCurrentDirection(index)
-                    }
-                    tv
-                }
-    }
-
-    private fun requestAudioPermission() {
-        val permissionCheck = ContextCompat.checkSelfPermission(applicationContext,
-                Manifest.permission.RECORD_AUDIO)
-
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.RECORD_AUDIO),
-                PERMISSIONS_REQUEST_RECORD_AUDIO
-            )
-        }
-    }
-
-    private fun toggleListener() {
-        if (instructionListener?.isListening() == true) {
-            listenerToggleBtn.setIcon(R.drawable.ic_microphone_off_white_36dp)
-            instructionListener?.stopListening()
-        } else {
-            listenerToggleBtn.setIcon(R.drawable.ic_microphone_outline_white_36dp)
-            requestAudioPermission()
-            instructionListener?.listen { instructionListenerCallback(it) }
-        }
-    }
-
-    private fun instructionListenerCallback(instruction: Instruction) {
-        Log.d("ReadActivity", instruction.toString())
-        when (instruction) {
-            is PlayIngredient -> viewModel.readIngredient()
-            is PrevIngredient -> {
-                viewModel.prevIngredient()
-                viewModel.readIngredient()
-            }
-            is NextIngredient -> {
-                viewModel.nextIngredient()
-                viewModel.readIngredient()
-            }
-            is PlayDirection -> viewModel.readDirection()
-            is PrevDirection -> {
-                viewModel.prevDirection()
-                viewModel.readDirection()
-            }
-            is NextDirection -> {
-                viewModel.nextDirection()
-                viewModel.readDirection()
-            }
-            is FirstDirection -> {
-            }
-            is FinalDirection -> {
-            }
-            is Stop -> {
-                viewModel.stopReading()
-            }
-        }
-    }
-
-    companion object {
-        private const val PERMISSIONS_REQUEST_RECORD_AUDIO = 1
+            .load(recipe.imageUrl)
+            .resize(width, height)
+            .into(recipe_header_image)
     }
 }

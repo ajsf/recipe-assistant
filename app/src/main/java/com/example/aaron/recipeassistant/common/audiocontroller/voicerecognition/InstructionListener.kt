@@ -1,42 +1,52 @@
-package com.example.aaron.recipeassistant.common.voicerecognitionservice
+package com.example.aaron.recipeassistant.common.audiocontroller.voicerecognition
 
-import android.app.Application
+import android.app.Activity
+import android.content.Context
 import android.util.Log
+import com.example.aaron.recipeassistant.common.audiocontroller.PermissionsHelper
+import com.example.aaron.recipeassistant.common.model.*
 import edu.cmu.pocketsphinx.*
 import java.io.File
 import java.io.IOException
 import kotlin.concurrent.thread
 
-class InstructionListener(private val applicationContext: Application) : RecognitionListener {
+typealias ListenerCallback = (UserAction) -> Unit
+
+interface InstructionListener : RecognitionListener {
+    fun listen(listenerCallback: ListenerCallback)
+    fun stopListening()
+}
+
+class InstructionListenerImpl(private val context: Context) : InstructionListener {
 
     private var recognizer: SpeechRecognizer? = null
-    private var callback: (Instruction) -> Unit = {}
+    private var callback: ListenerCallback = {}
 
-    private var listening: Boolean = false
+    private val TAG = "InstructionListener"
 
-    fun isListening() = listening
+    private val permissionsHelper = PermissionsHelper(context as Activity)
 
-    fun listen(listenerCallback: (Instruction) -> Unit) {
-        listening = true
+    override fun listen(listenerCallback: ListenerCallback) {
+        Log.d(TAG, "listen called")
         callback = listenerCallback
         initRecognizer()
     }
 
-    fun stopListening() {
-        listening = false
+    override fun stopListening() {
         detachActivity()
     }
 
-    fun detachActivity() {
+    private fun detachActivity() {
         recognizer?.cancel()
         callback = {}
     }
 
     private fun initRecognizer() {
+        permissionsHelper.requestRecordPermission()
         if (recognizer == null) {
             thread {
                 try {
-                    val assets = Assets(applicationContext)
+                    val assets = Assets(context)
                     val assetDir = assets.syncAssets()
                     setupRecognizer(assetDir)
                 } catch (e: IOException) {
@@ -49,15 +59,17 @@ class InstructionListener(private val applicationContext: Application) : Recogni
     }
 
     private fun setupRecognizer(assetsDir: File) {
-        recognizer = SpeechRecognizerSetup.defaultSetup()
-                .setAcousticModel(File(assetsDir, "en-us-ptm"))
-                .setDictionary(File(assetsDir, "9711.dict"))
-                .recognizer
-
-        recognizer?.addListener(this)
         val instructionsGrammar = File(assetsDir, "keyphrase.list")
-        recognizer?.addKeywordSearch(INSTRUCTION_SEARCH, instructionsGrammar)
-        recognizer?.startListening(INSTRUCTION_SEARCH)
+
+        SpeechRecognizerSetup.defaultSetup()
+            .setAcousticModel(File(assetsDir, "en-us-ptm"))
+            .setDictionary(File(assetsDir, "9711.dict"))
+            .recognizer
+            .apply {
+                addListener(this@InstructionListenerImpl)
+                addKeywordSearch(INSTRUCTION_SEARCH, instructionsGrammar)
+                startListening(INSTRUCTION_SEARCH)
+            }
     }
 
     override fun onBeginningOfSpeech() {
@@ -67,7 +79,7 @@ class InstructionListener(private val applicationContext: Application) : Recogni
     override fun onPartialResult(hypothesis: Hypothesis?) {
         if (hypothesis?.hypstr?.contains(STOP) == true) {
             recognizer?.cancel()
-            callback(Stop())
+            callback(StopReading)
             recognizer?.startListening(INSTRUCTION_SEARCH)
         }
     }
@@ -89,17 +101,17 @@ class InstructionListener(private val applicationContext: Application) : Recogni
     override fun onTimeout() {}
 
     private fun processInstruction(instruction: String) {
-        Log.d("stt", "Instruction: ${instruction.trim()}")
+        Log.d("stt", "UserAction: ${instruction.trim()}")
         when (instruction.trim()) {
-            PLAY_INGREDIENT -> callback(PlayIngredient())
-            PREV_INGREDIENT -> callback(PrevIngredient())
-            NEXT_INGREDIENT -> callback(NextIngredient())
-            NEXT_DIRECTION -> callback(NextDirection())
-            PREV_DIRECTION -> callback(PrevDirection())
-            PLAY_DIRECTION -> callback(PlayDirection())
-            STOP -> callback(Stop())
-            FIRST_DIRECTION -> callback(FirstDirection())
-            FINAL_DIRECTION -> callback(FinalDirection())
+            PLAY_INGREDIENT -> callback(PlayIngredient)
+            PREV_INGREDIENT -> callback(PrevIngredient)
+            NEXT_INGREDIENT -> callback(NextIngredient)
+            NEXT_DIRECTION -> callback(NextDirection)
+            PREV_DIRECTION -> callback(PrevDirection)
+            PLAY_DIRECTION -> callback(PlayDirection)
+            STOP -> callback(StopReading)
+            FIRST_DIRECTION -> callback(FirstDirection)
+            FINAL_DIRECTION -> callback(FinalDirection)
         }
     }
 
@@ -116,14 +128,3 @@ class InstructionListener(private val applicationContext: Application) : Recogni
         private const val FINAL_DIRECTION = "FINAL_DIRECTION"
     }
 }
-
-sealed class Instruction
-class PrevIngredient : Instruction()
-class NextIngredient : Instruction()
-class PlayIngredient : Instruction()
-class PrevDirection : Instruction()
-class NextDirection : Instruction()
-class FirstDirection : Instruction()
-class FinalDirection : Instruction()
-class PlayDirection : Instruction()
-class Stop : Instruction()

@@ -13,28 +13,23 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-
 import com.example.aaron.recipeassistant.R
 import com.example.aaron.recipeassistant.common.model.Recipe
 import com.example.aaron.recipeassistant.readrecipe.view.ReadRecipeActivity
 import com.squareup.picasso.Picasso
 
-class RecipeRecyclerViewAdapter internal constructor(activity: Activity, columnCount: Int) : RecyclerView.Adapter<RecipeRecyclerViewAdapter.RecipeViewHolder>() {
+class RecipeRecyclerViewAdapter(private val activity: Activity, columnCount: Int) :
+    RecyclerView.Adapter<RecipeRecyclerViewAdapter.RecipeViewHolder>() {
 
-    private val context: Context
-    private val activity: Activity
+    private val context: Context = activity
     private var recipeList: List<Recipe> = listOf()
+    private val picasso: Picasso = Picasso.with(context)
     private val imageSize: Int
-    private val picasso: Picasso
 
     init {
-        this.context = activity
-        this.activity = activity
-
         val displayMetrics = DisplayMetrics()
         activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
         imageSize = displayMetrics.widthPixels / columnCount
-        picasso = Picasso.with(context)
     }
 
     internal fun swapMealList(newRecipeList: List<Recipe>) {
@@ -43,23 +38,25 @@ class RecipeRecyclerViewAdapter internal constructor(activity: Activity, columnC
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.recipe_list_item, parent, false)
+        val view = LayoutInflater.from(context)
+            .inflate(R.layout.recipe_list_item, parent, false)
         view.isFocusable = true
         return RecipeViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val recipe = recipeList[position]
+        val mealName = recipe.title.trim().toUpperCase().replace(" ", "\n")
         holder.recipe = recipe
-        val mealName = recipe.title.trim { it <= ' ' }.toUpperCase().replace(" ", "\n")
         holder.recipeName.text = mealName
         picasso.load(recipe.imageUrl)
-                .into(holder.recipePhoto)
+            .into(holder.recipePhoto)
     }
 
     override fun getItemCount() = recipeList.size
 
-    inner class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    inner class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+        View.OnClickListener {
 
         val recipePhoto: ImageView = itemView.findViewById(R.id.recipe_photo)
         val recipeName: TextView = itemView.findViewById(R.id.recipe_name)
@@ -76,7 +73,6 @@ class RecipeRecyclerViewAdapter internal constructor(activity: Activity, columnC
         override fun onClick(v: View) {
             val intent = Intent(context, ReadRecipeActivity::class.java)
             intent.putExtra("recipe", recipe)
-
             val transImageName = context.getString(R.string.trans_img)
             val transImage = Pair.create(recipePhoto as View, transImageName)
             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, transImage)

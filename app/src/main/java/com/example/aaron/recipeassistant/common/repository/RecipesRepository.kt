@@ -1,4 +1,4 @@
-package com.example.aaron.recipeassistant.common
+package com.example.aaron.recipeassistant.common.repository
 
 import com.example.aaron.recipeassistant.common.model.Recipe
 import com.example.aaron.recipeassistant.common.model.toRecipeList
@@ -9,7 +9,8 @@ interface RecipesRepository {
     fun getRecipes(): Single<List<Recipe>>
 }
 
-class RecipesRepositoryImpl : RecipesRepository {
+class RecipesRepositoryImpl :
+    RecipesRepository {
 
     private val retrofit = RecipeService.retrofit?.create(RecipeService::class.java)
 

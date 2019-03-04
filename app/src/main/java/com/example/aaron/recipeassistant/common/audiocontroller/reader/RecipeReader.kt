@@ -1,4 +1,4 @@
-package com.example.aaron.recipeassistant.common.readerservice
+package com.example.aaron.recipeassistant.common.audiocontroller.reader
 
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import java.util.*
 
@@ -23,6 +24,10 @@ class RecipeReaderImpl(private val context: Context) : RecipeReader, LifecycleOb
 
     override fun setProgressListener(utteranceProgressListener: UtteranceProgressListener) {
         this.utteranceProgressListener = utteranceProgressListener
+    }
+
+    init {
+        (context as AppCompatActivity).lifecycle.addObserver(this)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)

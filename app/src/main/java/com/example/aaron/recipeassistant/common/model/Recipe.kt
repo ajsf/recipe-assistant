@@ -3,12 +3,18 @@ package com.example.aaron.recipeassistant.common.model
 import android.os.Parcel
 import android.os.Parcelable
 
-data class Recipe(val title: String, val ingredients: List<String>, val directions: List<String>, val imageUrl: String) : Parcelable {
+data class Recipe(
+    val title: String,
+    val ingredients: List<String>,
+    val directions: List<String>,
+    val imageUrl: String
+) : Parcelable {
     constructor(parcel: Parcel) : this(
-            parcel.readString(),
-            parcel.createStringArrayList(),
-            parcel.createStringArrayList(),
-            parcel.readString())
+        parcel.readString(),
+        parcel.createStringArrayList(),
+        parcel.createStringArrayList(),
+        parcel.readString()
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(title)

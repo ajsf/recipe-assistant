@@ -1,47 +1,65 @@
 package com.example.aaron.recipeassistant.readrecipe.view
 
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
+import android.content.Context
 import android.graphics.Typeface
-import android.support.v7.app.AppCompatActivity
+import android.util.AttributeSet
 import android.widget.TextView
 import com.example.aaron.recipeassistant.R
 
-abstract class RecipeCardItemText(activity: AppCompatActivity, text: String) : TextView(activity) {
+abstract class RecipeCardItemText @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    text: String = ""
+) : TextView(context, attrs, defStyleAttr) {
 
     val selected = MutableLiveData<Boolean>()
     abstract val selectedPadding: Int
     abstract val unselectedPadding: Int
 
     init {
-        selected.observe(activity, Observer {
-            textSize = if (it == true) {
-                setTypeface(null, Typeface.BOLD)
-                setBackgroundColor(context.getColor(R.color.selectedItem))
-                setPadding(8,selectedPadding,8,selectedPadding)
-                16f
-            } else {
-                setTypeface(null, Typeface.NORMAL)
-                setBackgroundColor(context.getColor(R.color.colorLightest))
-                setPadding(8, unselectedPadding, 8, unselectedPadding)
-                16f
-            }
-        })
         setText(text)
+    }
+
+    fun selectItem() {
+        setTypeface(null, Typeface.BOLD)
+        setBackgroundColor(context.getColor(R.color.selectedItem))
+        setPadding(8, selectedPadding, 8, selectedPadding)
+    }
+
+    fun unselectItem() {
+        setTypeface(null, Typeface.NORMAL)
+        setBackgroundColor(context.getColor(R.color.colorLightest))
+        setPadding(8, unselectedPadding, 8, unselectedPadding)
     }
 }
 
-class IngredientCardItemText(activity: AppCompatActivity, text: String) : RecipeCardItemText(activity, text) {
+class IngredientCardItemText
+@JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    text: String = ""
+) : RecipeCardItemText(context, attrs, defStyleAttr, text) {
     override val selectedPadding = 28
     override val unselectedPadding = 4
+
     init {
         setLineSpacing(1.2f, 1f)
     }
 }
 
-class DirectionCardItemText(activity: AppCompatActivity, text: String) : RecipeCardItemText(activity, text) {
+class DirectionCardItemText @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    text: String = ""
+) :
+    RecipeCardItemText(context, attrs, defStyleAttr, text) {
     override val selectedPadding = 28
     override val unselectedPadding = 12
+
     init {
         setLineSpacing(2f, 1f)
     }

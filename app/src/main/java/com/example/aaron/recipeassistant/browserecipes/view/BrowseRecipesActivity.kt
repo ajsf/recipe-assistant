@@ -8,8 +8,8 @@ import android.support.v7.widget.GridLayoutManager
 import android.transition.Fade
 import com.example.aaron.recipeassistant.R
 import com.example.aaron.recipeassistant.browserecipes.viewmodel.BrowseRecipesViewModel
+import com.example.aaron.recipeassistant.browserecipes.viewmodel.BrowseRecipesViewModelFactory
 import com.example.aaron.recipeassistant.browserecipes.viewmodel.BrowseRecipesViewState
-import com.example.aaron.recipeassistant.browserecipes.viewmodel.ViewModelFactory
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_browse_recipies.*
 
@@ -26,23 +26,20 @@ class BrowseRecipesActivity : AppCompatActivity() {
     }
 
     private fun initActivity() {
-        initViewModel()
-        createTransitions()
+        viewModel = createViewModel()
+        createTransition()
         initRecyclerView()
         observeViewModel()
     }
 
-    private fun initViewModel() {
-        val factory = ViewModelFactory()
-        viewModel = ViewModelProviders.of(this, factory).get(BrowseRecipesViewModel::class.java)
-        viewModel.getRecipes()
-    }
+    private fun createViewModel() = ViewModelProviders
+        .of(this, BrowseRecipesViewModelFactory())
+        .get(BrowseRecipesViewModel::class.java)
+        .apply { getRecipes() }
 
-    private fun createTransitions() {
+    private fun createTransition() {
         postponeEnterTransition()
-        val fade = Fade()
-        fade.duration = 640
-        window.reenterTransition = fade
+        window.reenterTransition = Fade().apply { duration = 640 }
     }
 
     private fun initRecyclerView() {
@@ -63,7 +60,6 @@ class BrowseRecipesActivity : AppCompatActivity() {
     private fun observeViewModel() {
         viewModel.viewStateLiveData.observe(this,
             Observer { it?.let { viewState -> render(viewState) } })
-        startPostponedEnterTransition()
     }
 
     private fun render(viewState: BrowseRecipesViewState) = with(viewState) {
