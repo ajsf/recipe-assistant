@@ -62,9 +62,12 @@ class ReadRecipeActivity : AppCompatActivity() {
     private fun initTransitions() {
         window.returnTransition = Fade().apply { duration = 600 }
         window.allowReturnTransitionOverlap = true
+
         recipe_details_layout.alpha = 0.0f
+        recipe_details_layout.animate().alpha(1.0f).duration = 800
+
         toolbar.alpha = 0f
-        toolbar.title = ""
+        toolbar.animate().alpha(1.0f).duration = 800
     }
 
     private fun initViewModel() {
@@ -89,11 +92,10 @@ class ReadRecipeActivity : AppCompatActivity() {
         ingredients_card.setSelectedItem(ingredientIndex)
         directions_card.setSelectedItem(directionIndex)
 
-        if (isListening) {
-            listenerToggleBtn?.setIcon(R.drawable.ic_microphone_outline_white_36dp)
-        } else {
-            listenerToggleBtn?.setIcon(R.drawable.ic_microphone_off_white_36dp)
-        }
+        val listenerToggleIcon = if (isListening) R.drawable.ic_microphone_outline_white_36dp
+        else R.drawable.ic_microphone_off_white_36dp
+
+        listenerToggleBtn?.setIcon(listenerToggleIcon)
     }
 
     private fun initButtons() {
@@ -108,36 +110,23 @@ class ReadRecipeActivity : AppCompatActivity() {
         directions_card.initButtons(::readDirection, ::nextDirection, ::prevDirection)
     }
 
-    private fun displayRecipe(recipe: Recipe) {
-        displayRecipeImage(recipe)
+    private fun displayRecipe(recipe: Recipe) = with(recipe) {
+        displayImage()
 
-        val ingredientsLabel = resources.getString(R.string.ingredients_label)
-        val directionsLabel = resources.getString(R.string.directions_label)
-
-        ingredients_card.displayItems(
-            recipe.ingredients,
-            ingredientsLabel
-        )
-        { viewModel.viewAction(SetIngredient(it)) }
-
-        directions_card.displayItems(
-            recipe.directions,
-            directionsLabel
-        )
-        { viewModel.viewAction(SetDirection(it)) }
-
-        collapsing_toolbar.title = recipe.title.trim { it <= ' ' }.toUpperCase()
-        recipe_details_layout.animate().alpha(1.0f).duration = 1000
-        toolbar.animate().alpha(1.0f).duration = 1000
+        ingredients_card.displayItems(ingredients) { viewModel.viewAction(SetIngredient(it)) }
+        directions_card.displayItems(directions) { viewModel.viewAction(SetDirection(it)) }
+        collapsing_toolbar.title = title.trim { it <= ' ' }.toUpperCase()
     }
 
-    private fun displayRecipeImage(recipe: Recipe) {
+    private fun Recipe.displayImage() {
         val metrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(metrics)
+
         val width = metrics.widthPixels
         val height = resources.getDimension(R.dimen.collapsing_toolbar_height).toInt()
-        Picasso.with(this)
-            .load(recipe.imageUrl)
+
+        Picasso.with(this@ReadRecipeActivity)
+            .load(imageUrl)
             .resize(width, height)
             .into(recipe_header_image)
     }

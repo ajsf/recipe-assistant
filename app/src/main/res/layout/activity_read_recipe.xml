@@ -31,14 +31,14 @@
                 android:paddingBottom="4dp"
                 tools:context="com.example.aaron.recipeassistant.readrecipe.view.ReadRecipeActivity">
 
-                <com.example.aaron.recipeassistant.readrecipe.view.RecipeCard
+                <com.example.aaron.recipeassistant.readrecipe.view.IngredientsCard
                     android:id="@+id/ingredients_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
                     android:backgroundTint="@color/colorLightest" />
 
-                <com.example.aaron.recipeassistant.readrecipe.view.RecipeCard
+                <com.example.aaron.recipeassistant.readrecipe.view.DirectionsCard
                     android:id="@+id/directions_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
