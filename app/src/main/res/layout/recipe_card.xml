@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="4dp"
     android:paddingBottom="4dp">
 
     <ImageView
         android:id="@+id/btn_prev"
         style="@style/AudioPlayerButton"
         android:layout_marginStart="10dp"
+        android:contentDescription="@string/previous_item"
         android:src="@drawable/ic_skip_previous_black_24dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -17,6 +19,7 @@
     <ImageView
         android:id="@+id/btn_play"
         style="@style/AudioPlayerButton"
+        android:contentDescription="@string/play_item"
         android:src="@drawable/ic_play_arrow_black_24dp"
         app:layout_constraintLeft_toRightOf="@id/btn_prev"
         app:layout_constraintRight_toLeftOf="@+id/btn_next"
@@ -25,6 +28,7 @@
     <ImageView
         android:id="@+id/btn_next"
         style="@style/AudioPlayerButton"
+        android:contentDescription="@string/next_item"
         android:src="@drawable/ic_skip_next_black_24dp"
         app:layout_constraintLeft_toRightOf="@id/btn_play"
         app:layout_constraintRight_toLeftOf="@+id/vertical_guideline"

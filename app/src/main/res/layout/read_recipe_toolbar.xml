@@ -25,6 +25,7 @@
             android:id="@+id/recipe_header_image"
             android:layout_width="match_parent"
             android:layout_height="@dimen/collapsing_toolbar_height"
+            android:contentDescription="@string/recipe_photo_description"
             android:foreground="@color/photoTint"
             android:scaleType="fitCenter"
             android:transitionName="@string/trans_img"

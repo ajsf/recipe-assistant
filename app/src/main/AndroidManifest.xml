@@ -16,7 +16,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".readrecipe.view.ReadRecipeActivity"
-            android:parentActivityName=".browserecipes.view.BrowseRecipesActivity" />
+            android:parentActivityName=".browserecipes.view.BrowseRecipesActivity"
+            android:theme="@style/ReadRecipeTheme" />
         <activity
             android:name=".browserecipes.view.BrowseRecipesActivity"
             android:launchMode="singleTask">

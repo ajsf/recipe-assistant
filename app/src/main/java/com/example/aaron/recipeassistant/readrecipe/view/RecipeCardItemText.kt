@@ -18,6 +18,8 @@ abstract class RecipeCardItemText @JvmOverloads constructor(
     abstract val selectedPadding: Int
     abstract val unselectedPadding: Int
 
+    private val horizontalPad = 32
+
     init {
         setText(text)
     }
@@ -25,13 +27,13 @@ abstract class RecipeCardItemText @JvmOverloads constructor(
     fun selectItem() {
         setTypeface(null, Typeface.BOLD)
         setBackgroundColor(context.getColor(R.color.selectedItem))
-        setPadding(8, selectedPadding, 8, selectedPadding)
+        setPadding(horizontalPad, selectedPadding, horizontalPad, selectedPadding)
     }
 
     fun unselectItem() {
         setTypeface(null, Typeface.NORMAL)
         setBackgroundColor(context.getColor(R.color.colorLightest))
-        setPadding(8, unselectedPadding, 8, unselectedPadding)
+        setPadding(horizontalPad, unselectedPadding, horizontalPad, unselectedPadding)
     }
 }
 
@@ -43,7 +45,7 @@ class IngredientCardItemText
     text: String = ""
 ) : RecipeCardItemText(context, attrs, defStyleAttr, text) {
     override val selectedPadding = 28
-    override val unselectedPadding = 4
+    override val unselectedPadding = 8
 
     init {
         setLineSpacing(1.2f, 1f)
@@ -58,9 +60,9 @@ class DirectionCardItemText @JvmOverloads constructor(
 ) :
     RecipeCardItemText(context, attrs, defStyleAttr, text) {
     override val selectedPadding = 28
-    override val unselectedPadding = 12
+    override val unselectedPadding = 16
 
     init {
-        setLineSpacing(2f, 1f)
+        setLineSpacing(2.5f, 1f)
     }
 }

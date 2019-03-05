@@ -54,6 +54,7 @@ class ReadRecipeActivity : AppCompatActivity() {
 
     private fun initActivity() {
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initTransitions()
         initViewModel()
         initButtons()

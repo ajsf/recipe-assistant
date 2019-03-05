@@ -41,7 +41,10 @@ abstract class RecipeCard
         View.inflate(context, R.layout.recipe_card, this)
         tv_label.text = labelText
         buildTextViews(items, clickListener)
-        itemsTextViewList.forEach { details_layout.addView(it) }
+        itemsTextViewList.forEach {
+            it.unselectItem()
+            details_layout.addView(it)
+        }
     }
 
     fun setPlaying(isPlaying: Boolean) {
