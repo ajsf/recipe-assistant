@@ -5,8 +5,10 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.example.aaron.recipeassistant.common.audiocontroller.AudioController
 import com.example.aaron.recipeassistant.common.model.*
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 
 data class ReadRecipeViewState(
@@ -19,7 +21,10 @@ data class ReadRecipeViewState(
     val directions: List<String> = listOf()
 )
 
-class ReadRecipeViewModel(private val audioController: AudioController) : ViewModel() {
+class ReadRecipeViewModel(
+    private val audioController: AudioController,
+    private val uiScheduler: Scheduler = AndroidSchedulers.mainThread()
+) : ViewModel() {
 
     val viewStateLiveData: LiveData<ReadRecipeViewState>
         get() = _viewStateLiveData
@@ -28,10 +33,16 @@ class ReadRecipeViewModel(private val audioController: AudioController) : ViewMo
 
     private val disposable: CompositeDisposable
 
+    private var userActionSubscription: Disposable? = null
+        set(value) {
+            if (value != null) disposable.add(value)
+            field = value
+        }
+
     init {
         _viewStateLiveData.value = ReadRecipeViewState()
         disposable = CompositeDisposable()
-        observeAudioController(disposable)
+        observeReadingStatus(disposable)
     }
 
     fun viewAction(userAction: UserAction) = instructionListenerCallback(userAction)
@@ -45,27 +56,22 @@ class ReadRecipeViewModel(private val audioController: AudioController) : ViewMo
         )
     }
 
-    private fun observeAudioController(disposable: CompositeDisposable): Unit =
-        with(audioController) {
-            disposable.addAll(
-                readingStatus.observeOn(AndroidSchedulers.mainThread()).subscribeBy {
-                    if (it.not()) {
-                        if (getViewState().readingIngredient) {
-                            updateReadingIngredient(false)
-                        } else {
-                            updateReadingDirection(false)
-                        }
+    private fun observeReadingStatus(disposable: CompositeDisposable) {
+        disposable.add(audioController.readingStatus
+            .observeOn(uiScheduler)
+            .subscribeBy {
+                if (it.not()) {
+                    if (getViewState().readingIngredient) {
+                        updateReadingIngredient(false)
+                    } else {
+                        updateReadingDirection(false)
                     }
-                },
-                listeningStatus.observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy { updateIsListening(it) },
-                userActionsFeed.observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy { instructionListenerCallback(it) })
-        }
+                }
+            })
+    }
 
     override fun onCleared() {
         super.onCleared()
-        audioController.stopListening()
         disposable.dispose()
     }
 
@@ -93,11 +99,25 @@ class ReadRecipeViewModel(private val audioController: AudioController) : ViewMo
         StopReading -> stopReading()
         FirstIngredient -> setCurrentIngredient(0)
         FinalIngredient -> setLastIngredient()
-        Listen -> audioController.listen()
-        StopListening -> audioController.stopListening()
+        Listen -> listen()
+        StopListening -> stopListening()
         ToggleListener -> toggleListener()
         is SetIngredient -> setCurrentIngredient(userAction.index)
         is SetDirection -> setCurrentDirection(userAction.index)
+    }
+
+    private fun listen() {
+        userActionSubscription = audioController.listen()
+            .observeOn(uiScheduler)
+            .doOnSubscribe { updateIsListening(true) }
+            .doOnCancel { updateIsListening(false) }
+            .doAfterTerminate { updateIsListening(false) }
+            .subscribeBy { instructionListenerCallback(it) }
+    }
+
+    private fun stopListening() {
+        userActionSubscription?.let { disposable.remove(it) }
+        userActionSubscription = null
     }
 
     private fun readIngredient() {
@@ -148,9 +168,9 @@ class ReadRecipeViewModel(private val audioController: AudioController) : ViewMo
 
     private fun toggleListener() {
         if (getViewState().isListening) {
-            audioController.stopListening()
+            stopListening()
         } else {
-            audioController.listen()
+            listen()
         }
     }
 
