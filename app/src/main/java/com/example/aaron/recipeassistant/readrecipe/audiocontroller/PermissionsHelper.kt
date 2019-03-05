@@ -1,4 +1,4 @@
-package com.example.aaron.recipeassistant.common.audiocontroller
+package com.example.aaron.recipeassistant.readrecipe.audiocontroller
 
 import android.Manifest
 import android.app.Activity

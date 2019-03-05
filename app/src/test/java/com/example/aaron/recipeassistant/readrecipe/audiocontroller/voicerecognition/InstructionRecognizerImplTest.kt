@@ -1,4 +1,4 @@
-package com.example.aaron.recipeassistant.common.audiocontroller.voicerecognition
+package com.example.aaron.recipeassistant.readrecipe.audiocontroller.voicerecognition
 
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever

@@ -1,6 +1,6 @@
 package com.example.aaron.recipeassistant.test.data
 
-import com.example.aaron.recipeassistant.common.model.*
+import com.example.aaron.recipeassistant.readrecipe.model.*
 
 
 object UserActionDataFactory {

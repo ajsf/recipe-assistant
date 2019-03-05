@@ -1,8 +1,8 @@
-package com.example.aaron.recipeassistant.common.audiocontroller
+package com.example.aaron.recipeassistant.readrecipe.audiocontroller
 
-import com.example.aaron.recipeassistant.common.audiocontroller.reader.RecipeReader
-import com.example.aaron.recipeassistant.common.audiocontroller.voicerecognition.InstructionRecognizer
-import com.example.aaron.recipeassistant.common.audiocontroller.voicerecognition.InstructionTranslator
+import com.example.aaron.recipeassistant.readrecipe.audiocontroller.reader.RecipeReader
+import com.example.aaron.recipeassistant.readrecipe.audiocontroller.voicerecognition.InstructionRecognizer
+import com.example.aaron.recipeassistant.readrecipe.audiocontroller.voicerecognition.InstructionTranslator
 import com.example.aaron.recipeassistant.test.data.TestDataFactory
 import com.example.aaron.recipeassistant.test.data.UserActionDataFactory
 import io.reactivex.rxkotlin.toFlowable

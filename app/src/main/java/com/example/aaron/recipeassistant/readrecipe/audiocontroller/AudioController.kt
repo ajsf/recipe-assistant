@@ -1,10 +1,10 @@
-package com.example.aaron.recipeassistant.common.audiocontroller
+package com.example.aaron.recipeassistant.readrecipe.audiocontroller
 
-import com.example.aaron.recipeassistant.common.audiocontroller.reader.ReadingFinishedNotification
-import com.example.aaron.recipeassistant.common.audiocontroller.reader.RecipeReader
-import com.example.aaron.recipeassistant.common.audiocontroller.voicerecognition.InstructionRecognizer
-import com.example.aaron.recipeassistant.common.audiocontroller.voicerecognition.InstructionTranslator
-import com.example.aaron.recipeassistant.common.model.UserAction
+import com.example.aaron.recipeassistant.readrecipe.audiocontroller.reader.ReadingFinishedNotification
+import com.example.aaron.recipeassistant.readrecipe.audiocontroller.reader.RecipeReader
+import com.example.aaron.recipeassistant.readrecipe.audiocontroller.voicerecognition.InstructionRecognizer
+import com.example.aaron.recipeassistant.readrecipe.audiocontroller.voicerecognition.InstructionTranslator
+import com.example.aaron.recipeassistant.readrecipe.model.UserAction
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.subjects.BehaviorSubject

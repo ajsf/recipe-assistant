@@ -1,8 +1,8 @@
-package com.example.aaron.recipeassistant.common.audiocontroller.voicerecognition
+package com.example.aaron.recipeassistant.readrecipe.audiocontroller.voicerecognition
 
 import android.app.Activity
 import android.content.Context
-import com.example.aaron.recipeassistant.common.audiocontroller.PermissionsHelper
+import com.example.aaron.recipeassistant.readrecipe.audiocontroller.PermissionsHelper
 import edu.cmu.pocketsphinx.Assets
 import edu.cmu.pocketsphinx.SpeechRecognizer
 import edu.cmu.pocketsphinx.SpeechRecognizerSetup

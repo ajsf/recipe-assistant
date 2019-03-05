@@ -1,4 +1,4 @@
-package com.example.aaron.recipeassistant.common.audiocontroller.reader
+package com.example.aaron.recipeassistant.readrecipe.audiocontroller.reader
 
 import android.speech.tts.UtteranceProgressListener
 

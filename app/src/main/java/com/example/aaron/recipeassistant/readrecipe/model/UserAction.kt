@@ -1,4 +1,4 @@
-package com.example.aaron.recipeassistant.common.model
+package com.example.aaron.recipeassistant.readrecipe.model
 
 sealed class UserAction
 

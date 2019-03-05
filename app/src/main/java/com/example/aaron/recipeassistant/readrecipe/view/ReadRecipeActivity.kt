@@ -9,10 +9,10 @@ import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
 import com.example.aaron.recipeassistant.R
-import com.example.aaron.recipeassistant.common.model.*
+import com.example.aaron.recipeassistant.common.model.Recipe
+import com.example.aaron.recipeassistant.readrecipe.model.*
 import com.example.aaron.recipeassistant.readrecipe.viewmodel.ReadRecipeViewModel
 import com.example.aaron.recipeassistant.readrecipe.viewmodel.ReadRecipeViewModelFactory
-import com.example.aaron.recipeassistant.readrecipe.viewmodel.ReadRecipeViewState
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_read_recipe.*
 import kotlinx.android.synthetic.main.read_recipe_toolbar.*
