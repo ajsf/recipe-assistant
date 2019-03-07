@@ -17,6 +17,7 @@ class RecipeMapper : Mapper<RecipeDTO, Recipe> {
             ?: listOf()
 
         return Recipe(
+            idMeal?.trim() ?: "",
             strMeal?.trim() ?: "",
             ingredients,
             directions,

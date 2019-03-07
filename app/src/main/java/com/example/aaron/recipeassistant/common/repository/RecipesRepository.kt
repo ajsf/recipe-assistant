@@ -1,23 +1,24 @@
 package com.example.aaron.recipeassistant.common.repository
 
-import com.example.aaron.recipeassistant.common.mapper.Mapper
+import android.arch.paging.PagedList
+import com.example.aaron.recipeassistant.common.db.RecipeCache
 import com.example.aaron.recipeassistant.common.model.Recipe
-import com.example.aaron.recipeassistant.common.model.RecipeListDTO
-import com.example.aaron.recipeassistant.common.networking.RecipeService
+import io.reactivex.Flowable
 import io.reactivex.Single
 
 interface RecipesRepository {
-    fun getRecipes(): Single<List<Recipe>>
+    fun getRecipeFeed(): Flowable<PagedList<Recipe>>
+    fun getRecipeById(recipeId: String): Single<Recipe>
 }
 
 class RecipesRepositoryImpl(
-    private val recipeService: RecipeService,
-    private val mapper: Mapper<RecipeListDTO, List<Recipe>>
-) :
-    RecipesRepository {
+    private val recipeCache: RecipeCache
+) : RecipesRepository {
 
-    override fun getRecipes(): Single<List<Recipe>> {
-        return recipeService.randomSelection().map { mapper.toModel(it) }
-            ?: Single.error(Throwable("Error"))
-    }
+    override fun getRecipeFeed(): Flowable<PagedList<Recipe>> =
+        recipeCache.getRecipeFeed()
+
+    override fun getRecipeById(recipeId: String): Single<Recipe> =
+        recipeCache.getRecipeById(recipeId)
+
 }

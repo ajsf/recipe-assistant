@@ -1,10 +1,12 @@
 package com.example.aaron.recipeassistant.browserecipes.view
 
 import android.app.Activity
+import android.arch.paging.PagedListAdapter
 import android.content.Context
 import android.content.Intent
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.util.Pair
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -18,11 +20,11 @@ import com.example.aaron.recipeassistant.common.model.Recipe
 import com.example.aaron.recipeassistant.readrecipe.view.ReadRecipeActivity
 import com.squareup.picasso.Picasso
 
-class RecipeRecyclerViewAdapter(private val activity: Activity, columnCount: Int) :
-    RecyclerView.Adapter<RecipeRecyclerViewAdapter.RecipeViewHolder>() {
+class RecipeAdapter(private val activity: Activity, columnCount: Int) :
+    PagedListAdapter<Recipe, RecipeAdapter.RecipeViewHolder>(RecipeDiffCallback) {
 
     private val context: Context = activity
-    private var recipeList: List<Recipe> = listOf()
+    //  private var recipeList: List<Recipe> = listOf()
     private val picasso: Picasso = Picasso.with(context)
     private val imageSize: Int
 
@@ -30,11 +32,6 @@ class RecipeRecyclerViewAdapter(private val activity: Activity, columnCount: Int
         val displayMetrics = DisplayMetrics()
         activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
         imageSize = displayMetrics.widthPixels / columnCount
-    }
-
-    internal fun swapMealList(newRecipeList: List<Recipe>) {
-        recipeList = newRecipeList
-        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
@@ -45,15 +42,14 @@ class RecipeRecyclerViewAdapter(private val activity: Activity, columnCount: Int
     }
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
-        val recipe = recipeList[position]
-        val mealName = recipe.title.toUpperCase().replace(" ", "\n")
-        holder.recipe = recipe
-        holder.recipeName.text = mealName
-        picasso.load(recipe.imageUrl)
-            .into(holder.recipePhoto)
+        getItem(position)?.let { recipe ->
+            val mealName = recipe.title.toUpperCase().replace(" ", "\n")
+            holder.recipe = recipe
+            holder.recipeName.text = mealName
+            picasso.load(recipe.imageUrl)
+                .into(holder.recipePhoto)
+        }
     }
-
-    override fun getItemCount() = recipeList.size
 
     inner class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
@@ -78,5 +74,16 @@ class RecipeRecyclerViewAdapter(private val activity: Activity, columnCount: Int
             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, transImage)
             activity.startActivity(intent, options.toBundle())
         }
+    }
+
+    companion object {
+        val RecipeDiffCallback: DiffUtil.ItemCallback<Recipe> =
+            object : DiffUtil.ItemCallback<Recipe>() {
+                override fun areItemsTheSame(oldItem: Recipe, newItem: Recipe) =
+                    oldItem.id == newItem.id
+
+                override fun areContentsTheSame(oldItem: Recipe, newItem: Recipe) =
+                    oldItem == newItem
+            }
     }
 }

@@ -2,6 +2,7 @@ package com.example.aaron.recipeassistant.browserecipes.view
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
@@ -9,13 +10,13 @@ import android.transition.Fade
 import com.example.aaron.recipeassistant.R
 import com.example.aaron.recipeassistant.browserecipes.viewmodel.BrowseRecipesViewModel
 import com.example.aaron.recipeassistant.browserecipes.viewmodel.BrowseRecipesViewModelFactory
-import com.example.aaron.recipeassistant.browserecipes.viewmodel.BrowseRecipesViewState
+import com.example.aaron.recipeassistant.common.model.Recipe
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_browse_recipies.*
 
 class BrowseRecipesActivity : AppCompatActivity() {
 
-    private lateinit var recipeRecyclerViewAdapter: RecipeRecyclerViewAdapter
+    private lateinit var recipeRecyclerViewAdapter: RecipeAdapter
 
     private lateinit var viewModel: BrowseRecipesViewModel
 
@@ -33,9 +34,8 @@ class BrowseRecipesActivity : AppCompatActivity() {
     }
 
     private fun createViewModel() = ViewModelProviders
-        .of(this, BrowseRecipesViewModelFactory())
+        .of(this, BrowseRecipesViewModelFactory(this))
         .get(BrowseRecipesViewModel::class.java)
-        .apply { getRecipes() }
 
     private fun createTransition() {
         postponeEnterTransition()
@@ -46,7 +46,7 @@ class BrowseRecipesActivity : AppCompatActivity() {
         val columnCount = resources.getInteger(R.integer.recipe_browse_columns)
         val lm = GridLayoutManager(this, columnCount)
         recipeRecyclerViewAdapter =
-            RecipeRecyclerViewAdapter(
+            RecipeAdapter(
                 this,
                 columnCount
             )
@@ -58,16 +58,19 @@ class BrowseRecipesActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.viewStateLiveData.observe(this,
-            Observer { it?.let { viewState -> render(viewState) } })
+        viewModel.recipeList.observe(this, Observer {
+            it?.let { recipeList -> render(recipeList) }
+        })
     }
 
-    private fun render(viewState: BrowseRecipesViewState) = with(viewState) {
-        recipes.onEach { recipe ->
-            Picasso.with(this@BrowseRecipesActivity)
-                .load(recipe.imageUrl)
-                .fetch()
+    private fun render(recipeList: PagedList<Recipe>) {
+        recipeList.onEach { recipe ->
+            recipe?.imageUrl?.let {
+                Picasso.with(this@BrowseRecipesActivity)
+                    .load(it)
+                    .fetch()
+            }
         }
-        recipeRecyclerViewAdapter.swapMealList(recipes)
+        recipeRecyclerViewAdapter.submitList(recipeList)
     }
 }

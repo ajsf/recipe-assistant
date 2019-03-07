@@ -1,5 +1,6 @@
 package com.example.aaron.recipeassistant.test.data
 
+import com.example.aaron.recipeassistant.common.db.room.RecipeEntity
 import com.example.aaron.recipeassistant.common.model.Recipe
 import com.example.aaron.recipeassistant.common.model.RecipeDTO
 import com.example.aaron.recipeassistant.common.model.RecipeListDTO
@@ -67,6 +68,15 @@ object RecipeDataFactory {
     )
 
     fun randomRecipe() = Recipe(
+        randomString(),
+        randomString(),
+        randomList(::randomString),
+        randomList(::randomString),
+        randomString()
+    )
+
+    fun randomRecipeEntity() = RecipeEntity(
+        randomString(),
         randomString(),
         randomList(::randomString),
         randomList(::randomString),

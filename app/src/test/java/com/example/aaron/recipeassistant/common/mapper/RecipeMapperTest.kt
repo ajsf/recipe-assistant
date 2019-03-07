@@ -44,7 +44,13 @@ class RecipeMapperTest {
             "$strMeasure20 $strIngredient20"
         )
         val expectedDirections = strInstructions?.split("\\n".toRegex())
-        return@with Recipe(strMeal!!, expectedIngredients, expectedDirections!!, strMealThumb!!)
+        return@with Recipe(
+            idMeal!!,
+            strMeal!!,
+            expectedIngredients,
+            expectedDirections!!,
+            strMealThumb!!
+        )
     }
 
     @Test
