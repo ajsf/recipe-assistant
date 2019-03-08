@@ -14,7 +14,7 @@ import com.example.aaron.recipeassistant.readrecipe.model.*
 import com.example.aaron.recipeassistant.readrecipe.viewmodel.ReadRecipeViewModel
 import com.example.aaron.recipeassistant.readrecipe.viewmodel.ReadRecipeViewModelFactory
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_read_recipe.*
+import kotlinx.android.synthetic.main.activity_read_content.*
 import kotlinx.android.synthetic.main.read_recipe_toolbar.*
 
 class ReadRecipeActivity : AppCompatActivity() {

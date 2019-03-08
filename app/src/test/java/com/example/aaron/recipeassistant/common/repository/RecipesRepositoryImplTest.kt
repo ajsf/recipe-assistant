@@ -4,7 +4,6 @@ import com.example.aaron.recipeassistant.common.db.RecipeCache
 import com.example.aaron.recipeassistant.common.model.Recipe
 import com.example.aaron.recipeassistant.common.model.RecipeListDTO
 import com.example.aaron.recipeassistant.test.data.RecipeDataFactory
-import com.example.aaron.recipeassistant.test.data.TestDataFactory
 import com.example.aaron.recipeassistant.test.data.TestDataFactory.randomString
 import org.amshove.kluent.*
 import org.junit.Before

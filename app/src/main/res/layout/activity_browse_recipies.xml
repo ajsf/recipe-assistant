@@ -11,9 +11,7 @@
         android:layout_height="match_parent"
         android:background="@color/colorLight"
         android:clipToPadding="false"
-        android:paddingLeft="2dp"
-        android:paddingRight="2dp"
-        android:paddingBottom="2dp" />
+        android:padding="2dp" />
 
 </FrameLayout>
 
