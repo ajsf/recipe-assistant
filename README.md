@@ -1,6 +1,6 @@
 # Recipe Assistant
 
-An Android app that pulls recipes from [TheMealDb](https://www.themealdb.com/), and can read the recipes out loud, triggered by buttons or voice commands. The reading is implemented using Android TextToSpeach and voice recognition is implemented using [PocketSphinx](https://github.com/cmusphinx/pocketsphinx).
+An Android app that pulls recipes from [TheMealDb](https://www.themealdb.com/), and can read the recipes out loud, triggered by buttons or voice commands. The reading is implemented using Android [TextToSpeech](https://developer.android.com/reference/android/speech/tts/TextToSpeech) and voice recognition is implemented using [PocketSphinx](https://github.com/cmusphinx/pocketsphinx).
 
 ![Screenshot](./.github/screenshot1.png?raw=true)&nbsp;&nbsp;&nbsp;&nbsp;![Screenshot](./.github/screenshot2.png?raw=true)
 
