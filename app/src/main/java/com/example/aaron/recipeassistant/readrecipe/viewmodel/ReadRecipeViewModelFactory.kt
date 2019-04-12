@@ -3,6 +3,7 @@ package com.example.aaron.recipeassistant.readrecipe.viewmodel
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
+import com.example.aaron.recipeassistant.common.repository.RepositoryProvider
 import com.example.aaron.recipeassistant.readrecipe.audiocontroller.AudioControllerImpl
 import com.example.aaron.recipeassistant.readrecipe.audiocontroller.reader.RecipeReaderImpl
 import com.example.aaron.recipeassistant.readrecipe.audiocontroller.voicerecognition.InstructionRecognizerImpl
@@ -21,7 +22,9 @@ class ReadRecipeViewModelFactory(private val context: Context) : ViewModelProvid
         val audioController =
             AudioControllerImpl(reader, instructionRecognizer, instructionTranslator)
 
-        return ReadRecipeViewModel(audioController) as T
+        val repository = RepositoryProvider.getRepository(context)
+
+        return ReadRecipeViewModel(audioController, repository) as T
     }
 
 }

@@ -3,7 +3,7 @@ package com.example.aaron.recipeassistant.readrecipe.viewmodel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import com.example.aaron.recipeassistant.common.model.Recipe
+import com.example.aaron.recipeassistant.common.repository.RecipesRepository
 import com.example.aaron.recipeassistant.readrecipe.audiocontroller.AudioController
 import com.example.aaron.recipeassistant.readrecipe.model.*
 import io.reactivex.Scheduler
@@ -11,9 +11,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 
 class ReadRecipeViewModel(
     private val audioController: AudioController,
+    private val repository: RecipesRepository,
     private val uiScheduler: Scheduler = AndroidSchedulers.mainThread()
 ) : ViewModel() {
 
@@ -38,13 +40,20 @@ class ReadRecipeViewModel(
 
     fun viewAction(userAction: UserAction) = instructionListenerCallback(userAction)
 
-    fun setRecipe(recipe: Recipe) {
-        updateViewState(
-            ReadRecipeViewState(
-                ingredients = recipe.ingredients,
-                directions = recipe.directions
-            )
-        )
+    fun getRecipe(recipeId: String) {
+        disposable.add(repository.getRecipeById(recipeId)
+            .observeOn(uiScheduler)
+            .subscribeOn(Schedulers.io())
+            .subscribeBy {
+                updateViewState(
+                    ReadRecipeViewState(
+                        ingredients = it.ingredients,
+                        directions = it.directions,
+                        title = it.title,
+                        imageUrl = it.imageUrl
+                    )
+                )
+            })
     }
 
     private fun observeReadingStatus(disposable: CompositeDisposable) {

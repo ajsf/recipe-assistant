@@ -7,5 +7,7 @@ data class ReadRecipeViewState(
     val ingredientIndex: Int = 0,
     val directionIndex: Int = 0,
     val ingredients: List<String> = listOf(),
-    val directions: List<String> = listOf()
+    val directions: List<String> = listOf(),
+    val title: String = "",
+    val imageUrl: String = ""
 )

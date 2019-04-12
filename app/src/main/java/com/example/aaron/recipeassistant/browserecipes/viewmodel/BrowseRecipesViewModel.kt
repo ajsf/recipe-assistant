@@ -11,7 +11,9 @@ class BrowseRecipesViewModel(
     repository: RecipesRepository
 ) : ViewModel() {
 
+    private val recipeFeed = repository.getRecipeFeed()
+
     val recipeList: LiveData<PagedList<Recipe>> =
-        LiveDataReactiveStreams.fromPublisher(repository.getRecipeFeed())
+        LiveDataReactiveStreams.fromPublisher(recipeFeed)
 
 }

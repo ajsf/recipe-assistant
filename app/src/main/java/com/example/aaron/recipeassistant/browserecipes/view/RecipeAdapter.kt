@@ -1,6 +1,5 @@
 package com.example.aaron.recipeassistant.browserecipes.view
 
-import android.app.Activity
 import android.arch.paging.PagedListAdapter
 import android.content.Context
 import android.content.Intent
@@ -8,30 +7,30 @@ import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.util.Pair
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import com.example.aaron.recipeassistant.R
 import com.example.aaron.recipeassistant.common.model.Recipe
+import com.example.aaron.recipeassistant.readrecipe.view.RECIPE_ID_EXTRA
 import com.example.aaron.recipeassistant.readrecipe.view.ReadRecipeActivity
 import com.squareup.picasso.Picasso
 
-class RecipeAdapter(private val activity: Activity, columnCount: Int) :
+
+class RecipeAdapter(private val activity: BrowseRecipesActivity) :
     PagedListAdapter<Recipe, RecipeAdapter.RecipeViewHolder>(RecipeDiffCallback) {
 
     private val context: Context = activity
-    //  private var recipeList: List<Recipe> = listOf()
     private val picasso: Picasso = Picasso.with(context)
-    private val imageSize: Int
 
     init {
-        val displayMetrics = DisplayMetrics()
-        activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
-        imageSize = displayMetrics.widthPixels / columnCount
+        setHasStableIds(true)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return currentList?.get(position).hashCode().toLong()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
@@ -59,19 +58,16 @@ class RecipeAdapter(private val activity: Activity, columnCount: Int) :
         lateinit var recipe: Recipe
 
         init {
-            val params = RelativeLayout.LayoutParams(imageSize, imageSize)
-            recipeName.layoutParams = params
-            recipePhoto.layoutParams = params
             itemView.setOnClickListener(this)
-            activity.startPostponedEnterTransition()
         }
 
         override fun onClick(v: View) {
             val intent = Intent(context, ReadRecipeActivity::class.java)
-            intent.putExtra("recipe", recipe)
+            intent.putExtra(RECIPE_ID_EXTRA, recipe.id)
             val transImageName = context.getString(R.string.trans_img)
             val transImage = Pair.create(recipePhoto as View, transImageName)
             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, transImage)
+            activity.returnRecipeId = recipe.id
             activity.startActivity(intent, options.toBundle())
         }
     }
@@ -79,11 +75,13 @@ class RecipeAdapter(private val activity: Activity, columnCount: Int) :
     companion object {
         val RecipeDiffCallback: DiffUtil.ItemCallback<Recipe> =
             object : DiffUtil.ItemCallback<Recipe>() {
-                override fun areItemsTheSame(oldItem: Recipe, newItem: Recipe) =
-                    oldItem.id == newItem.id
+                override fun areItemsTheSame(oldItem: Recipe, newItem: Recipe): Boolean {
+                    return oldItem.id == newItem.id
+                }
 
-                override fun areContentsTheSame(oldItem: Recipe, newItem: Recipe) =
-                    oldItem == newItem
+                override fun areContentsTheSame(oldItem: Recipe, newItem: Recipe): Boolean {
+                    return oldItem == newItem
+                }
             }
     }
 }

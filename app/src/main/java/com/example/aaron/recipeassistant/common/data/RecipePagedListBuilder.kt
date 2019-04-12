@@ -9,6 +9,8 @@ import io.reactivex.Flowable
 
 class RecipePagedListBuilder(private val boundaryCallback: RecipeBoundaryCallback) {
 
+    private val pageSize = 5
+
     fun getPagedList(cache: RecipeCache): Flowable<PagedList<Recipe>> {
 
         boundaryCallback.cache = cache
@@ -16,8 +18,9 @@ class RecipePagedListBuilder(private val boundaryCallback: RecipeBoundaryCallbac
         val sourceFactory = cache.allRecipes()
 
         val config = PagedList.Config.Builder()
-            .setPageSize(2)
-            .setInitialLoadSizeHint(6)
+            .setPageSize(pageSize)
+            .setInitialLoadSizeHint(pageSize * 3)
+            .setEnablePlaceholders(true)
             .build()
 
         return RxPagedListBuilder(sourceFactory, config)

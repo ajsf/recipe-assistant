@@ -9,13 +9,15 @@ import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
 import com.example.aaron.recipeassistant.R
-import com.example.aaron.recipeassistant.common.model.Recipe
 import com.example.aaron.recipeassistant.readrecipe.model.*
 import com.example.aaron.recipeassistant.readrecipe.viewmodel.ReadRecipeViewModel
 import com.example.aaron.recipeassistant.readrecipe.viewmodel.ReadRecipeViewModelFactory
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_read_content.*
 import kotlinx.android.synthetic.main.read_recipe_toolbar.*
+
+const val RECIPE_ID_EXTRA = "RECIPE_ID"
 
 class ReadRecipeActivity : AppCompatActivity() {
 
@@ -57,18 +59,12 @@ class ReadRecipeActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initTransitions()
         initViewModel()
-        initButtons()
     }
 
     private fun initTransitions() {
+        postponeEnterTransition()
         window.returnTransition = Fade().apply { duration = 600 }
         window.allowReturnTransitionOverlap = true
-
-        recipe_details_layout.alpha = 0.0f
-        recipe_details_layout.animate().alpha(1.0f).duration = 800
-
-        toolbar.alpha = 0f
-        toolbar.animate().alpha(1.0f).duration = 800
     }
 
     private fun initViewModel() {
@@ -78,15 +74,21 @@ class ReadRecipeActivity : AppCompatActivity() {
             .get(ReadRecipeViewModel::class.java)
 
         viewModel.viewStateLiveData.observe(this, Observer {
-            it?.let { viewState -> render(viewState) }
+            it?.let { viewState ->
+                if (viewState.directions.isNotEmpty() && viewState.ingredients.isNotEmpty()) {
+                    render(viewState)
+                }
+            }
         })
 
-        val recipe = intent.extras.getParcelable("recipe") as Recipe
-        viewModel.setRecipe(recipe)
-        displayRecipe(recipe)
+        val recipeId = intent.extras.getString(RECIPE_ID_EXTRA)
+        viewModel.getRecipe(recipeId)
     }
 
     private fun render(viewState: ReadRecipeViewState): Unit = with(viewState) {
+        startPostponedEnterTransition()
+        displayRecipe()
+
         ingredients_card.setPlaying(readingIngredient)
         directions_card.setPlaying(readingDirection)
 
@@ -111,24 +113,33 @@ class ReadRecipeActivity : AppCompatActivity() {
         directions_card.initButtons(::readDirection, ::nextDirection, ::prevDirection)
     }
 
-    private fun displayRecipe(recipe: Recipe) = with(recipe) {
-        displayImage()
-
+    private fun ReadRecipeViewState.displayRecipe() {
+        displayImage(imageUrl)
         ingredients_card.displayItems(ingredients) { viewModel.viewAction(SetIngredient(it)) }
         directions_card.displayItems(directions) { viewModel.viewAction(SetDirection(it)) }
         collapsing_toolbar.title = title.trim { it <= ' ' }.toUpperCase()
+        initButtons()
     }
 
-    private fun Recipe.displayImage() {
-        val metrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(metrics)
+    private fun displayImage(url: String) {
+        if (url.isNotBlank()) {
+            val metrics = DisplayMetrics()
+            windowManager.defaultDisplay.getMetrics(metrics)
 
-        val width = metrics.widthPixels
-        val height = resources.getDimension(R.dimen.collapsing_toolbar_height).toInt()
+            val width = metrics.widthPixels
+            val height = resources.getDimension(R.dimen.collapsing_toolbar_height).toInt()
 
-        Picasso.with(this@ReadRecipeActivity)
-            .load(imageUrl)
-            .resize(width, height)
-            .into(recipe_header_image)
+            Picasso.with(this@ReadRecipeActivity)
+                .load(url)
+                .resize(width, height)
+                .into(recipe_header_image, object : Callback {
+                    override fun onSuccess() {
+                        startPostponedEnterTransition()
+                    }
+
+                    override fun onError() {
+                    }
+                })
+        }
     }
 }

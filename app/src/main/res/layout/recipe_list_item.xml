@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/recipe_list_item"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="2dp"
     android:layout_marginTop="4dp"
@@ -16,18 +16,20 @@
 
     <ImageView
         android:id="@+id/recipe_photo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:contentDescription="@string/recipe_photo_description"
         android:foreground="@drawable/raise_drawable"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitXY"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/recipe_name"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:gravity="bottom"
         android:maxLines="6"
         android:paddingStart="@dimen/recipe_browse_title_padding_horizontal"
         android:paddingEnd="@dimen/recipe_browse_title_padding_horizontal"
@@ -35,6 +37,8 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse"
         android:textColor="@color/colorLightest"
         android:textSize="@dimen/text_xlarge"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:text="Smoked Brisket" />
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

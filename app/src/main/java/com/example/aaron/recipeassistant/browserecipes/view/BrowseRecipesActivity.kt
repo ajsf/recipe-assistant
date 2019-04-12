@@ -20,6 +20,8 @@ class BrowseRecipesActivity : AppCompatActivity() {
 
     private lateinit var viewModel: BrowseRecipesViewModel
 
+    var returnRecipeId: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_browse_recipies)
@@ -38,22 +40,18 @@ class BrowseRecipesActivity : AppCompatActivity() {
         .get(BrowseRecipesViewModel::class.java)
 
     private fun createTransition() {
-        postponeEnterTransition()
         window.reenterTransition = Fade().apply { duration = 640 }
     }
 
     private fun initRecyclerView() {
         val columnCount = resources.getInteger(R.integer.recipe_browse_columns)
         val lm = GridLayoutManager(this, columnCount)
-        recipeRecyclerViewAdapter =
-            RecipeAdapter(
-                this,
-                columnCount
-            )
+        recipeRecyclerViewAdapter = RecipeAdapter(this)
+
         with(rv_recipe_browse) {
             layoutManager = lm
-            setHasFixedSize(true)
             adapter = recipeRecyclerViewAdapter
+            setHasFixedSize(true)
         }
     }
 
