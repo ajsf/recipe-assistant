@@ -6,6 +6,7 @@ import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
+import android.transition.ChangeBounds
 import android.transition.Fade
 import com.example.aaron.recipeassistant.R
 import com.example.aaron.recipeassistant.browserecipes.viewmodel.BrowseRecipesViewModel
@@ -19,8 +20,6 @@ class BrowseRecipesActivity : AppCompatActivity() {
     private lateinit var recipeRecyclerViewAdapter: RecipeAdapter
 
     private lateinit var viewModel: BrowseRecipesViewModel
-
-    var returnRecipeId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +39,10 @@ class BrowseRecipesActivity : AppCompatActivity() {
         .get(BrowseRecipesViewModel::class.java)
 
     private fun createTransition() {
-        window.reenterTransition = Fade().apply { duration = 640 }
+        window.reenterTransition = Fade().apply { duration = 600 }
+        window.exitTransition = Fade().apply { duration = 1500 }
+        window.allowReturnTransitionOverlap = true
+        window.allowEnterTransitionOverlap = true
     }
 
     private fun initRecyclerView() {

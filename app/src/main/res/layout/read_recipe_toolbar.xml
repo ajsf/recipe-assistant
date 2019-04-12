@@ -36,8 +36,11 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:transitionName="@string/trans_txt"
             app:layout_collapseMode="pin"
-            app:layout_scrollFlags="scroll|enterAlways" />
+            app:layout_scrollFlags="scroll|enterAlways">
+
+        </android.support.v7.widget.Toolbar>
 
     </net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout>
 

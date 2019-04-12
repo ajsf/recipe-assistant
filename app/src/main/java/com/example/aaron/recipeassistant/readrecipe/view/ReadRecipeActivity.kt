@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.transition.ChangeBounds
 import android.transition.Fade
 import android.util.DisplayMetrics
 import android.view.Menu
@@ -64,7 +65,6 @@ class ReadRecipeActivity : AppCompatActivity() {
     private fun initTransitions() {
         postponeEnterTransition()
         window.returnTransition = Fade().apply { duration = 600 }
-        window.allowReturnTransitionOverlap = true
     }
 
     private fun initViewModel() {

@@ -5,7 +5,7 @@
     <string name="ingredients_label">Ingredients</string>
     <string name="directions_label">Directions</string>
     <string name="trans_img">transition_image</string>
-    <string name="trans_title">trans_title</string>
+    <string name="trans_txt">transition_text</string>
     <string name="previous_item">Previous Item</string>
     <string name="play_item">Play Item</string>
     <string name="next_item">Next Item</string>

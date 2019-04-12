@@ -65,9 +65,12 @@ class RecipeAdapter(private val activity: BrowseRecipesActivity) :
             val intent = Intent(context, ReadRecipeActivity::class.java)
             intent.putExtra(RECIPE_ID_EXTRA, recipe.id)
             val transImageName = context.getString(R.string.trans_img)
+            val transTextName = context.getString(R.string.trans_txt)
+            recipePhoto.transitionName = transImageName
+            recipeName.transitionName = transTextName
             val transImage = Pair.create(recipePhoto as View, transImageName)
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, transImage)
-            activity.returnRecipeId = recipe.id
+            val transText = Pair.create(recipeName as View, transTextName)
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, transImage, transText)
             activity.startActivity(intent, options.toBundle())
         }
     }
